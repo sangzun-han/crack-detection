@@ -27,3 +27,4 @@ function clickEvent(event) {
   console.log(event.offsetX, event.offsetY);
 }
 canvas.addEventListener('click', clickEvent);
+``;

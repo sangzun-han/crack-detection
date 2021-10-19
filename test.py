@@ -31,7 +31,7 @@ def DrawConnectedCircle(event, x, y, flags, param):
 
 input_path = "input_img/flattening/"
 output_path = "output_img/flattening/"
-img_name = "test2"
+img_name = "test"
 extension = ".png"
 marker_length = 3.1
 img = cv2.imread(input_path + img_name + extension)
@@ -85,11 +85,13 @@ std_length = ((ids_1[2][0]-ids_1[3][0])**2 +
               (ids_1[2][1] - ids_1[3][1])**2)**(1/2)
 cv2.line(dst, (int(standard[0][0]), int(standard[0][1])), (int(
     standard[1][0]), int(standard[1][1])), (0, 0, 255), 2)
-
+print((int(standard[0][0]), int(standard[0][1])))
+print(std_length)
 cv2.putText(dst, "3.1CM", (int(standard[0][0]), int(standard[0][1])),
             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 points = []
 length_set = []
+print(standard[0][1], standard[1][0])
 
 
 drawing = False  # 마우스 왼쪽 버튼이 눌러지면 그리기 시작
