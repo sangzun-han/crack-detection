@@ -44,6 +44,10 @@ parameters = cv2.aruco.DetectorParameters_create()
 corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(
     gray, aruco_dict, parameters=parameters)
 frame_markers = cv2.aruco.drawDetectedMarkers(img.copy(), corners, ids)
+a = corners[2][0]
+print(corners)
+marker_heigth = ((a[1][0]-a[2][0])**2 + (a[1][1]-a[2][1])**2)**(1/2)
+marker_weigth = ((a[2][0]-a[3][0])**2 + (a[2][1]-a[3][1])**2)**(1/2)
 
 
 for i in range(len(ids)):
@@ -85,10 +89,9 @@ std_length = ((ids_1[2][0]-ids_1[3][0])**2 +
               (ids_1[2][1] - ids_1[3][1])**2)**(1/2)
 cv2.line(dst, (int(standard[0][0]), int(standard[0][1])), (int(
     standard[1][0]), int(standard[1][1])), (0, 0, 255), 2)
-print((int(standard[0][0]), int(standard[0][1])))
-print(std_length)
-cv2.putText(dst, "3.1CM", (int(standard[0][0]), int(standard[0][1])),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+# print((int(standard[0][0]), int(standard[0][1])))
+# print(std_length)
+
 points = []
 length_set = []
 print(standard[0][1], standard[1][0])

@@ -9,5 +9,10 @@
 </head>
 <body>
   <img src="{{image.image.url}}" />
+  {{ids}}
+  {{standard}}
+  {{corners}}
+  <canvas onclick="clickEvent" id="canvas" width="1000" height="1000" style="border: solid 3px #ccc"></canvas>
 </body>
+<script src="{% static 'js/index.js' %}"></script>
 </html>
