@@ -5,18 +5,59 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/result.css' %}" />
     <title>Document</title>
   </head>
   <body>
-    <img src="{{image.image.url}}" />
-    {{std_length}} {{mkr_length}} {{width}} {{height}}
+    <img src="{{image.image.url}}" class="result_img" alt="{{image.image}}" />
     <canvas
       onclick="clickEvent"
       id="canvas"
-      width="1000"
-      height="1000"
-      style="border: solid 3px #ccc"
+      width="{{width}}"
+      height="{{height}}"
     ></canvas>
+    <div id="result">0cm</div>
   </body>
-  <script src="{% static 'js/index.js' %}"></script>
+  <script>
+    function change(sum) {
+      let x = (document.getElementById('result').innerHTML = sum + 'cm');
+    }
+
+    let point = [];
+    let length = [];
+
+    function clickEvent(event) {
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      context.strokeStyle = 'red';
+      context.lineWidth = 3;
+      context.fill();
+      context.fillStyle = 'red';
+
+      context.beginPath();
+      context.arc(event.offsetX, event.offsetY, 2, 0, Math.PI * 2);
+      let x = [event.offsetX, event.offsetY];
+      point.push(x);
+
+      if (point.length >= 2) {
+        let a = point[point.length - 1];
+        let b = point[point.length - 2];
+        let sub_length = ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** (1 / 2);
+        let real_length = parseFloat(
+          ('{{mkr_length}}' * sub_length) / '{{std_length}}'
+        );
+
+        length.push(real_length);
+        let sum = Math.round(length.reduce((a, b) => a + b, 0) * 100) / 100;
+
+        change(sum);
+
+        context.beginPath();
+        context.moveTo(a[0], a[1]);
+        context.lineTo(b[0], b[1]);
+        context.stroke();
+      }
+    }
+    canvas.addEventListener('click', clickEvent);
+  </script>
 </html>

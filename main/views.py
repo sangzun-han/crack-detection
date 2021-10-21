@@ -13,7 +13,6 @@ def index(request):
         
 
 def upload(request):      
-          
     if request.method == 'POST':
         # model  photo post to save
         image = Photo()
@@ -29,7 +28,6 @@ def upload(request):
         corners, ids, rejectedImgPoints = cv2.aruco.detectMarkers(
         gray, aruco_dict, parameters=parameters
         )
-        print(ids)
         # 각 마커의 바깥쪽 꼭지점을 뽑아내어 각 포인트에 저장
         for i in range(len(ids)):
             c = corners[i][0]
@@ -95,7 +93,7 @@ def upload(request):
         cv2.circle(dst, dp, 3, (255, 255, 255), -1) # 하양
         
         cv2.line(dst,ap,dp,(0,0,255),1)
-        std_length = ((ap[0]-dp[0])**2 + (ap[1]-bp[1])**2)**(1/2)
+        std_length = ((ap[0]-dp[0])**2 + (ap[1]-dp[1])**2) ** (1/2)
         
 
         cv2.imwrite(image.image.url[1:],dst)
