@@ -112,6 +112,89 @@ def detection(request):
         image.title = request.POST['title']
         image.image = request.FILES['image']
         image.save()
+
+    img = cv2.imread(image.image.url[1:])
+    # Convert into gray scale
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Image processing ( smoothing )
+    # Averaging
+    blur = cv2.blur(gray,(4,4))
+
+    # Apply logarithmic transform
+    img_log = (np.log(blur+1)/(np.log(1+np.max(blur))))*255
+
+    # Specify the data type
+    img_log = np.array(img_log,dtype=np.uint8)
+
+    # Image smoothing: bilateral filter
+    bilateral = cv2.bilateralFilter(img_log, 5, 75, 75)
+
+    # Canny Edge Detection
+    edges = cv2.Canny(bilateral,100,200)
+
+    # Morphological Closing Operator
+    kernel = np.ones((5,5),np.uint8)
+    closing = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel)
+    
+    # Create feature detecting method
+    # sift = cv2.xfeatures2d.SIFT_create()
+    # surf = cv2.xfeatures2d.SURF_create()
+    orb = cv2.ORB_create(nfeatures=1500)
+
+    # Make featured Image
+    keypoints, descriptors = orb.detectAndCompute(closing, None)
+    featuredImg = cv2.drawKeypoints(closing, keypoints, None)
+    contour, _ = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    
+    
+    ctr_s = contour[0]
+    if len(contour)>=2:
+        for i in range(1,len(contour)):
+            ctr_s=np.concatenate((ctr_s, contour[i]), axis=0)
+            print(len(ctr_s))
+    
+    contours_min = np.argmin(ctr_s, axis = 0)
+    contours_max = np.argmax(ctr_s, axis = 0)
+
+    x_Min = (ctr_s[contours_min[0][0]][0][0],ctr_s[contours_min[0][0]][0][1])
+    y_Min = (ctr_s[contours_min[0][1]][0][0],ctr_s[contours_min[0][1]][0][1])
+    x_Max = (ctr_s[contours_max[0][0]][0][0],ctr_s[contours_max[0][0]][0][1])
+    y_Max = (ctr_s[contours_max[0][1]][0][0],ctr_s[contours_max[0][1]][0][1])
+    print(x_Min,y_Min,x_Max,y_Max)
+    blue_color = (255, 0, 0)
+    green_color = (0, 255, 0)
+    red_color = (0, 0, 255)
+    white_color = (255, 255, 255)
+
+    
+    a = img.copy()
+    # 모두 0으로 되어 있는 빈 Canvas(검정색)
+
+    cv2.drawContours(a, contour, -1, (255,255,255), 3)
+    cv2.circle(a, x_Min, 5, blue_color, -1)
+    cv2.circle(a, y_Min, 5, green_color, -1)
+    cv2.circle(a, x_Max, 5, red_color, -1)
+    cv2.circle(a, y_Max, 5, white_color, -1)
+    cv2.line(a, x_Min, x_Max, blue_color, 2)
+    cv2.line(a, y_Min, y_Max, green_color, 2)
+    
+    
+    
+    
+    cv2.drawContours(a, [contour[1]], -1, (255,255,255), -1)
+    
+    cv2.imwrite(image.image.url[1:], a)
+    
+    # Use plot to show original and output image
     return render(request, 'detection.html', {
         'image': image.image.url
     })
+
+        # for contr in contour:
+    #     rect = cv2.minAreaRect(contr)
+    #     box = cv2.boxPoints(rect)   # 중심점과 각도를 4개의 꼭지점 좌표로 변환
+    #     box = np.int0(box)          # 정수로 변환
+    #     cv2.drawContours(closing, [box], -1, (255,255,255), -1)
+
+     
