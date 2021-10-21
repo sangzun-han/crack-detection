@@ -10,9 +10,7 @@ marker_length = 3.1
 def index(request): 
     return render(request, 'index.html')
 
-        
-
-def upload(request):      
+def upload(request):
     if request.method == 'POST':
         # model  photo post to save
         image = Photo()
@@ -102,7 +100,18 @@ def upload(request):
             'std_length':std_length,
             'mkr_length' : marker_length,
             'width' : int(width_ratio * 500),
-            'height' :  int(height_ratio * 500),
+            'height' : int(height_ratio * 500),
         })
     else:
         return redirect('/')
+
+def detection(request):
+    if request.method == 'POST':
+        # model  photo post to save
+        image = Photo()
+        image.title = request.POST['title']
+        image.image = request.FILES['image']
+        image.save()
+    return render(request, 'detection.html', {
+        'image': image.image.url
+    })
