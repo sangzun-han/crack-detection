@@ -112,6 +112,12 @@ def detection(request):
         image.title = request.POST['title']
         image.image = request.FILES['image']
         image.save()
-    return render(request, 'detection.html', {
-        'image': image.image.url
-    })
+        # opencv to flattening
+        img = cv2.imread(image.image.url[1:])
+        imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        ret, thr = cv2.threshold(imgray, 127,255,0)
+        tmp = cv2.findContours(thr, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours = tmp[0] if len(tmp) == 2 else tmp[1]
+        cv2.drawContours(img, contours, -1, (255,255,0), 3)
+    
+    return render(request, 'detection.html')
