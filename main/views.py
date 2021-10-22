@@ -117,7 +117,7 @@ def detection(request):
 
     # Image processing ( smoothing )
     # Averaging
-    blur = cv2.blur(gray,(3,3))
+    blur = cv2.blur(gray,(4,4))
 
     # Apply logarithmic transform
     img_log = (np.log(blur+1)/(np.log(1+np.max(blur))))*255
@@ -150,7 +150,7 @@ def detection(request):
     if len(contour)>=2:
         for i in range(1,len(contour)):
             ctr_s=np.concatenate((ctr_s, contour[i]), axis=0)
-            print(len(ctr_s))
+           
     
     contours_min = np.argmin(ctr_s, axis = 0)
     contours_max = np.argmax(ctr_s, axis = 0)
@@ -169,14 +169,22 @@ def detection(request):
     a = img.copy()
     # 모두 0으로 되어 있는 빈 Canvas(검정색)
 
-    cv2.drawContours(a, contour, -1, (255,255,255), 3)
+    cv2.drawContours(a, contour, -1, (0,255,255), 3)
     cv2.circle(a, x_Min, 5, blue_color, -1)
     cv2.circle(a, y_Min, 5, green_color, -1)
     cv2.circle(a, x_Max, 5, red_color, -1)
     cv2.circle(a, y_Max, 5, white_color, -1)
-    cv2.line(a, x_Min, x_Max, blue_color, 2)
-    cv2.line(a, y_Min, y_Max, green_color, 2)
-    
+
+
+    cv2.line(a, x_Min, y_Max, blue_color, 2)
+    cv2.line(a, x_Max, y_Min, green_color, 2)
+
+    cv2.line(a, x_Min, y_Min, red_color, 2)
+    cv2.line(a, x_Max, y_Max, white_color, 2)
+
+    list1 = [(x_Min[0]-y_Min[0])**2]
+    # cv2.line(a, x_Max, y_Max, red_color, 2)
+    # cv2.line(a, y_Min, x_Max, white_color, 2)
     
     
     
