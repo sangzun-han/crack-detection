@@ -14,7 +14,6 @@ def upload(request):
     if request.method == 'POST':
         # model  photo post to save
         image = Photo()
-        image.title = request.POST['title']
         image.image = request.FILES['image']
         image.save()
         # opencv to flattening
@@ -109,7 +108,6 @@ def detection(request):
     if request.method == 'POST':
         # model  photo post to save
         image = Photo()
-        image.title = request.POST['title']
         image.image = request.FILES['image']
         image.save()
 
@@ -119,7 +117,7 @@ def detection(request):
 
     # Image processing ( smoothing )
     # Averaging
-    blur = cv2.blur(gray,(0,0))
+    blur = cv2.blur(gray,(3,3))
 
     # Apply logarithmic transform
     img_log = (np.log(blur+1)/(np.log(1+np.max(blur))))*255

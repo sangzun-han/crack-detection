@@ -1,36 +1,70 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/index.css' %}" />
+    <script
+      defer
+      src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"
+    ></script>
+    <script defer src="{% static 'js/index.js' %}"></script>
     <title>Document</title>
   </head>
   <body>
-    <div>손으로</div>
-    <form
-      action="{% url 'upload' %}"
-      method="POST"
-      enctype="multipart/form-data"
-    >
-      {% csrf_token %}
-      <input type="text" name="title" />
-      <input type="file" name="image" />
-      <input type="submit" value="submit" />
-    </form>
+    <main id="main">
+      <!-- <form
+        action="{% url 'upload' %}"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        {% csrf_token %}
+        <input type="text" name="title" />
+        <input type="file" name="image" />
+        <input type="submit" value="submit" />
+      </form> -->
 
-    <br />
-    <br />
-    <div>detection</div>
-    <form
-      action="{% url 'detection' %}"
-      method="POST"
-      enctype="multipart/form-data"
-    >
-      {% csrf_token %}
-      <input type="text" name="title" />
-      <input type="file" name="image" />
-      <input type="submit" value="submit" />
-    </form>
+      <form class="file-upload" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <button
+          class="file-upload-btn"
+          type="button"
+          onclick="$('.file-upload-input').trigger( 'click' )"
+        >
+          Add Image
+        </button>
+        <div class="image-upload-wrap">
+          <input
+            class="file-upload-input"
+            type="file"
+            name="image"
+            onchange="readURL(this);"
+            accept="image/*"
+          />
+          <div class="drag-text">
+            <h3>Drag and drop a file or select add Image</h3>
+          </div>
+        </div>
+        <div class="file-upload-content">
+          <img class="file-upload-image" src="#" alt="your image" />
+          <div class="image-title-wrap">
+            <input
+              type="submit"
+              class="start-button"
+              formaction="{% url 'upload' %}"
+              value="수동탐지"
+            />
+            <input
+              type="submit"
+              class="start-button"
+              formaction="{% url 'detection' %}"
+              value="자동탐지"
+            />
+          </div>
+        </div>
+      </form>
+    </main>
   </body>
 </html>
