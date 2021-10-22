@@ -119,7 +119,7 @@ def detection(request):
 
     # Image processing ( smoothing )
     # Averaging
-    blur = cv2.blur(gray,(4,4))
+    blur = cv2.blur(gray,(0,0))
 
     # Apply logarithmic transform
     img_log = (np.log(blur+1)/(np.log(1+np.max(blur))))*255
@@ -182,7 +182,7 @@ def detection(request):
     
     
     
-    cv2.drawContours(a, [contour[1]], -1, (255,255,255), -1)
+   
     
     cv2.imwrite(image.image.url[1:], a)
     
