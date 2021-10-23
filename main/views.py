@@ -182,7 +182,6 @@ def detection(request):
     cv2.line(a, x_Min, y_Min, red_color, 2)
     cv2.line(a, x_Max, y_Max, white_color, 2)
 
-    list1 = [(x_Min[0]-y_Min[0])**2]
     # cv2.line(a, x_Max, y_Max, red_color, 2)
     # cv2.line(a, y_Min, x_Max, white_color, 2)
     
