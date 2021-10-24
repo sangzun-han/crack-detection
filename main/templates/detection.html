@@ -1,16 +1,36 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/index.css' %}" />
     <title>Document</title>
   </head>
   <body>
-    <img src="{{image.image.url}}" alt="{{image.image}}" />
-    <p>redline : {{red}}cm</p>
-    <p>greenline : {{green}}cm</p>
-    <p>blueline : {{blue}}cm</p>
-    <p>yellowline : {{yellow}}cm</p>
+    <main id="main">
+      <img src="{{image.image.url}}" alt="{{image.image}}" />
+      <div class="line">
+        <div class="line-info">
+          <hr style="border: solid 3px rgb(255, 0, 0)" width="100px" />
+          <span>{{red}}cm</span>
+        </div>
+
+        <div class="line-info">
+          <hr style="border: solid 3px rgb(0, 255, 0)" width="100px" />
+          <span>{{green}}cm</span>
+        </div>
+
+        <div class="line-info">
+          <hr style="border: solid 3px rgb(0, 0, 255)" width="100px" />
+          <span>{{blue}}cm</span>
+        </div>
+        <div class="line-info">
+          <hr style="border: solid 3px rgb(255, 255, 0)" width="100px" />
+          <span>{{yellow}}cm</span>
+        </div>
+      </div>
+    </main>
   </body>
 </html>

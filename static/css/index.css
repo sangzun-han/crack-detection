@@ -115,3 +115,7 @@
   border: 0;
   transition: all 0.2s ease;
 }
+
+.line-info {
+  display: flex;
+}
