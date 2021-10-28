@@ -110,7 +110,7 @@ def detection(request):
         # model  photo post to save
         image = Photo()
         image.image = request.FILES['image']
-        image.save()    
+        image.save()
         img = cv2.imread(image.image.url[1:])
         height, width = img.shape[:2]
         corners,ids = Marker.detect_marker(img)
@@ -234,6 +234,13 @@ def detection(request):
         y_Max = (ctr_s[contours_max[0][1]][0][0],ctr_s[contours_max[0][1]][0][1])
 
         a = dst.copy()
+        ellipse = cv2.fitEllipse(ctr_s)
+        (x, y), (MA, ma), angle = cv2.fitEllipse(ctr_s)
+        cv2.ellipse(a, ellipse, (255,0,0), 3)
+        cv2.imwrite(image.image.url[1:],a)
+        MA = Distance.real_distance(Distance.marker_length, std_length, MA)
+        ma = Distance.real_distance(Distance.marker_length, std_length, ma)
+        area = round(MA*ma*3.14,2)
 
         cv2.circle(a, x_Min, 3, Distance.black_color, -1)
         cv2.circle(a, y_Min, 3, Distance.black_color, -1)
@@ -250,13 +257,12 @@ def detection(request):
         red_length = Distance.distance(x_Min, y_Min)
         yellow_length = Distance.distance(x_Max, y_Max)
         
-   
         real_green = Distance.real_distance(Distance.marker_length, std_length, green_length)
         real_blue  = Distance.real_distance(Distance.marker_length, std_length, blue_length)
         real_red = Distance.real_distance(Distance.marker_length, std_length, red_length)
         real_yellow = Distance.real_distance(Distance.marker_length,std_length, yellow_length)
-        
-        cv2.imwrite(image.image.url[1:],a) 
+
+        cv2.imwrite(image.image.url[1:],a)
         return render(request, 'detection.html', {
             'image': image,
             'mkr_length' : Distance.marker_length,
@@ -266,4 +272,5 @@ def detection(request):
             'red': real_red,
             'yellow': real_yellow,
             'blue': real_blue,
+            'area': area
             })
