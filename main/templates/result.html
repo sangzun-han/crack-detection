@@ -20,26 +20,12 @@
     <div id="area"></div>
   </body>
   <script>
+    let point = [];
+    let length = [];
     function change(sum) {
       let x = (document.getElementById('result').innerHTML = sum + 'cm');
     }
-
-    let point = [];
-    let length = [];
-
-    function clickEvent(event) {
-      const canvas = document.getElementById('canvas');
-      const context = canvas.getContext('2d');
-      context.strokeStyle = 'red';
-      context.lineWidth = 3;
-      context.fillStyle = 'red';
-
-      context.beginPath();
-      context.arc(event.offsetX, event.offsetY, 1, 0, Math.PI * 2);
-      context.stroke();
-      let x = [event.offsetX, event.offsetY];
-      point.push(x);
-
+    function triangleArea() {
       if (point.length === 4) {
         let diagonal =
           ((point[0][0] - point[2][0]) ** 2 +
@@ -80,6 +66,21 @@
       } else {
         document.getElementById('area').innerHTML = '';
       }
+    }
+    function clickEvent(event) {
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      context.strokeStyle = 'red';
+      context.lineWidth = 3;
+      context.fillStyle = 'red';
+
+      context.beginPath();
+      context.arc(event.offsetX, event.offsetY, 1, 0, Math.PI * 2);
+      context.stroke();
+      let x = [event.offsetX, event.offsetY];
+      point.push(x);
+
+      triangleArea();
 
       if (point.length >= 2) {
         let a = point[point.length - 1];

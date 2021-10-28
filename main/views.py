@@ -110,8 +110,16 @@ def detection(request):
         # model  photo post to save
         image = Photo()
         image.image = request.FILES['image']
+        image.flatting_image = request.FILES['image']
+        image.length_image = request.FILES['image']
+        image.area_image = request.FILES['image']
         image.save()
+
         img = cv2.imread(image.image.url[1:])
+        flatting_img = cv2.imread(image.flatting_image.url[1:])
+        length_img = cv2.imread(image.length_image.url[1:])
+        area_img = cv2.imread(image.area_image.url[1:])
+
         height, width = img.shape[:2]
         corners,ids = Marker.detect_marker(img)
         
@@ -148,9 +156,8 @@ def detection(request):
             ], dtype=np.float32)
         # pts1의 좌표에 표시. perspective 변환 후 이동 점 확인.
         M = cv2.getPerspectiveTransform(pts1, pts2)
-        dst = cv2.warpPerspective(img, M=M, dsize=(int(width_ratio * 500), height_ratio * 500))
-            
-
+        dst = cv2.warpPerspective(flatting_img, M=M, dsize=(int(width_ratio * 500), height_ratio * 500))
+        
         # 변환된 사진을 이용하여 픽셀간 거리 구하기
         corners, ids = Marker.detect_marker(dst)
 
@@ -195,9 +202,13 @@ def detection(request):
 
         cv2.line(dst,tlbl,tlbr,(0,0,255),1)
         std_length = Distance.distance(tlbl,tlbr)
-        
         dst = dst[ tlbr[1]:bltr[1], tlbr[0]: trbl[0] ]
-        gray = cv2.cvtColor(dst,cv2.COLOR_BGR2GRAY)
+
+        cv2.imwrite(image.flatting_image.url[1:], dst)
+
+        area_img, length_img = dst.copy(), dst.copy()
+
+        gray = cv2.cvtColor(area_img,cv2.COLOR_BGR2GRAY)
         blur = cv2.blur(gray,(3,3))
         # Apply logarithmic transform
         img_log = (np.log(blur+1)/(np.log(1+np.max(blur))))*255
@@ -224,33 +235,37 @@ def detection(request):
             for i in range(1,len(contour)):
                 ctr_s=np.concatenate((ctr_s, contour[i]), axis=0)
 
+        ellipse = cv2.fitEllipse(ctr_s)
+        (x, y), (MA, ma), angle = cv2.fitEllipse(ctr_s)
+        cv2.ellipse(area_img, ellipse, (255,0,0), 3)
+        
+        MA = Distance.real_distance(Distance.marker_length, std_length, MA)
+        ma = Distance.real_distance(Distance.marker_length, std_length, ma)
+        area = round(MA*ma*3.14,2)
+
+        cv2.imwrite(image.area_image.url[1:],area_img)
 
         contours_min = np.argmin(ctr_s, axis = 0)
         contours_max = np.argmax(ctr_s, axis = 0)
+
+
 
         x_Min = (ctr_s[contours_min[0][0]][0][0],ctr_s[contours_min[0][0]][0][1])
         y_Min = (ctr_s[contours_min[0][1]][0][0],ctr_s[contours_min[0][1]][0][1])
         x_Max = (ctr_s[contours_max[0][0]][0][0],ctr_s[contours_max[0][0]][0][1])
         y_Max = (ctr_s[contours_max[0][1]][0][0],ctr_s[contours_max[0][1]][0][1])
 
-        a = dst.copy()
-        ellipse = cv2.fitEllipse(ctr_s)
-        (x, y), (MA, ma), angle = cv2.fitEllipse(ctr_s)
-        cv2.ellipse(a, ellipse, (255,0,0), 3)
-        cv2.imwrite(image.image.url[1:],a)
-        MA = Distance.real_distance(Distance.marker_length, std_length, MA)
-        ma = Distance.real_distance(Distance.marker_length, std_length, ma)
-        area = round(MA*ma*3.14,2)
+        cv2.circle(length_img, x_Min, 3, Distance.black_color, -1)
+        cv2.circle(length_img, y_Min, 3, Distance.black_color, -1)
+        cv2.circle(length_img, x_Max, 3, Distance.black_color, -1)
+        cv2.circle(length_img, y_Max, 3, Distance.black_color, -1)
 
-        cv2.circle(a, x_Min, 3, Distance.black_color, -1)
-        cv2.circle(a, y_Min, 3, Distance.black_color, -1)
-        cv2.circle(a, x_Max, 3, Distance.black_color, -1)
-        cv2.circle(a, y_Max, 3, Distance.black_color, -1)
+        cv2.line(length_img, x_Min, y_Max, Distance.blue_color, 2)
+        cv2.line(length_img, x_Max, y_Min, Distance.green_color, 2)
+        cv2.line(length_img, x_Min, y_Min, Distance.red_color, 2)
+        cv2.line(length_img, x_Max, y_Max, Distance.yellow_color, 2)
 
-        cv2.line(a, x_Min, y_Max, Distance.blue_color, 2)
-        cv2.line(a, x_Max, y_Min, Distance.green_color, 2)
-        cv2.line(a, x_Min, y_Min, Distance.red_color, 2)
-        cv2.line(a, x_Max, y_Max, Distance.yellow_color, 2)
+        cv2.imwrite(image.length_image.url[1:], length_img)
 
         green_length = Distance.distance(x_Max,y_Min)
         blue_length = Distance.distance(x_Min, y_Max)
@@ -262,7 +277,8 @@ def detection(request):
         real_red = Distance.real_distance(Distance.marker_length, std_length, red_length)
         real_yellow = Distance.real_distance(Distance.marker_length,std_length, yellow_length)
 
-        cv2.imwrite(image.image.url[1:],a)
+        
+
         return render(request, 'detection.html', {
             'image': image,
             'mkr_length' : Distance.marker_length,
