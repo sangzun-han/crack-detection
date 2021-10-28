@@ -10,4 +10,4 @@ class Distance:
     return ((x[0]-y[0])**2 + (x[1]-y[1])**2) ** (1/2)
 
   def real_distance(marker_length, std_length,color_length):
-      return round(marker_length * color_length / std_length,2)
+      return round(marker_length * color_length / std_length, 2)

@@ -17,22 +17,79 @@
       height="{{height}}"
     ></canvas>
     <div id="result">0cm</div>
+    <button onclick="setup()">원</button>
   </body>
   <script>
     function change(sum) {
-      let x = (document.getElementById("result").innerHTML = sum + "cm");
+      let x = (document.getElementById('result').innerHTML = sum + 'cm');
     }
 
     let point = [];
     let length = [];
 
+    function setup() {
+      createCanvas('{{width}}', '{{height}}');
+      let x = 0;
+      let y = 0;
+      let max_x = Number.MIN_SAFE_INTEGER;
+      let min_x = Number.MAX_SAFE_INTEGER;
+      let max_y = Number.MIN_SAFE_INTEGER;
+      let min_y = Number.MAX_SAFE_INTEGER;
+      let xMaxIndex = 0;
+      let yMaxIndex = 0;
+      let center = [];
+
+      for (let i = 0; i < point.length; i++) {
+        x += point[i][0];
+        y += point[i][1];
+      }
+
+      for (let i = 0; i < point.length; i++) {
+        if (max_x < point[i][0]) {
+          max_x = point[i][0];
+          xMaxIndex = i;
+        } else if (min_x > point[i][0]) {
+          min_x = point[i][0];
+        }
+      }
+
+      for (let i = 0; i < point.length; i++) {
+        if (max_y < point[i][1]) {
+          max_y = point[i][1];
+          yMaxIndex = i;
+        } else if (min_y > point[i][1]) {
+          min_y = point[i][1];
+        }
+      }
+      width = max_x - min_x;
+      height = max_y - min_y;
+      console.log(width, height);
+
+      x = parseInt(x / point.length);
+      y = parseInt(y / point.length);
+      center.push(x, y);
+
+      angle = getAngleFromThreePoints(
+        point[xMaxIndex],
+        center,
+        point[yMaxIndex]
+      );
+      // angle = getAngle(x, y);
+      // console.log(x, y, width, height);
+      console.log(angle);
+      document.getElementById('defaultCanvas0').style.transform = `rotate(${
+        angle - 90
+      }deg)`;
+      ellipse(x, y, width, height);
+    }
+
     function clickEvent(event) {
-      const canvas = document.getElementById("canvas");
-      const context = canvas.getContext("2d");
-      context.strokeStyle = "red";
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      context.strokeStyle = 'red';
       context.lineWidth = 3;
       context.fill();
-      context.fillStyle = "red";
+      context.fillStyle = 'red';
 
       context.beginPath();
       context.arc(event.offsetX, event.offsetY, 2, 0, Math.PI * 2);
@@ -44,7 +101,7 @@
         let b = point[point.length - 2];
         let sub_length = ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** (1 / 2);
         let real_length = parseFloat(
-          ("{{mkr_length}}" * sub_length) / "{{std_length}}"
+          ('{{mkr_length}}' * sub_length) / '{{std_length}}'
         );
 
         length.push(real_length);
@@ -58,6 +115,36 @@
         context.stroke();
       }
     }
-    canvas.addEventListener("click", clickEvent);
+    canvas.addEventListener('click', clickEvent);
+
+    // function getAngle(x, y) {
+    //   let radian = Math.atan2(x, y);
+    //   let degree = parseInt((radian * 180) / Math.PI);
+    //   return degree;
+    // }
+
+    function getAngleFromThreePoints(p1, p2, p3) {
+      let p12 = Math.sqrt(
+        Math.pow(p1[0] - p2[0], 2) + Math.pow(p1[1] - p2[1], 2)
+      );
+      let p23 = Math.sqrt(
+        Math.pow(p2[0] - p3[0], 2) + Math.pow(p2[1] - p3[1], 2)
+      );
+      let p31 = Math.sqrt(
+        Math.pow(p3[0] - p1[0], 2) + Math.pow(p3[1] - p1[1], 2)
+      );
+      let radian = Math.acos(
+        (p12 * p12 + p23 * p23 - p31 * p31) / (2 * p12 * p23)
+      );
+
+      let degree = parseInt((radian / Math.PI) * 180);
+      return degree;
+    }
   </script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.3.0/p5.min.js"
+    integrity="sha512-tGZFF1kxT/c9C+kv77mKkZ9Ww1VyU8TMX6HLUSzbPrDLuptbiRFBfti8A33ip+BBIHYUsybuZD9OKLmIqdLmaQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
 </html>
