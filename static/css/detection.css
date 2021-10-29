@@ -35,7 +35,7 @@ p {
 }
 
 #main {
-  max-width: 1600px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -46,8 +46,11 @@ p {
   column-gap: 20px;
   row-gap: 30px;
   margin: 0 auto;
-  max-width: 1600px;
-  margin-top: 90px;
+  max-width: 1400px;
+}
+
+.container .image {
+  width: 421px;
 }
 
 .container .desc {
@@ -55,8 +58,7 @@ p {
 }
 
 .desc {
-  width: 250px;
-  height: 480px;
+  height: 250px;
 }
 .desc .title {
   text-align: center;
@@ -76,7 +78,6 @@ p {
 
 .passive {
   display: flex;
-  flex-direction: column;
   justify-content: center;
 }
 .desc .passive_length,
@@ -96,7 +97,7 @@ p {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 230px;
+  margin-top: 45px;
 }
 
 .save .save_btn {
@@ -118,8 +119,9 @@ p {
 }
 
 .auto {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
 }
 
 .line_info {
