@@ -116,9 +116,9 @@ def detection(request):
         image.save()
 
         img = cv2.imread(image.image.url[1:])
-        flatting_img = cv2.imread(image.flatting_image.url[1:])
-        length_img = cv2.imread(image.length_image.url[1:])
-        area_img = cv2.imread(image.area_image.url[1:])
+        flatting_image = cv2.imread(image.flatting_image.url[1:])
+        length_image = cv2.imread(image.length_image.url[1:])
+        area_image = cv2.imread(image.area_image.url[1:])
 
         height, width = img.shape[:2]
         corners,ids = Marker.detect_marker(img)
@@ -156,7 +156,7 @@ def detection(request):
             ], dtype=np.float32)
         # pts1의 좌표에 표시. perspective 변환 후 이동 점 확인.
         M = cv2.getPerspectiveTransform(pts1, pts2)
-        dst = cv2.warpPerspective(flatting_img, M=M, dsize=(int(width_ratio * 500), height_ratio * 500))
+        dst = cv2.warpPerspective(flatting_image, M=M, dsize=(int(width_ratio * 500), height_ratio * 500))
         
         # 변환된 사진을 이용하여 픽셀간 거리 구하기
         corners, ids = Marker.detect_marker(dst)
@@ -206,9 +206,9 @@ def detection(request):
 
         cv2.imwrite(image.flatting_image.url[1:], dst)
 
-        area_img, length_img = dst.copy(), dst.copy()
+        area_image, length_image = dst.copy(), dst.copy()
 
-        gray = cv2.cvtColor(area_img,cv2.COLOR_BGR2GRAY)
+        gray = cv2.cvtColor(area_image,cv2.COLOR_BGR2GRAY)
         blur = cv2.blur(gray,(3,3))
         # Apply logarithmic transform
         img_log = (np.log(blur+1)/(np.log(1+np.max(blur))))*255
@@ -237,13 +237,13 @@ def detection(request):
 
         ellipse = cv2.fitEllipse(ctr_s)
         (x, y), (MA, ma), angle = cv2.fitEllipse(ctr_s)
-        cv2.ellipse(area_img, ellipse, (255,0,0), 3)
+        cv2.ellipse(area_image, ellipse, (255,0,0), 3)
         
         MA = Distance.real_distance(Distance.marker_length, std_length, MA)
         ma = Distance.real_distance(Distance.marker_length, std_length, ma)
         area = round(MA*ma*3.14,2)
 
-        cv2.imwrite(image.area_image.url[1:],area_img)
+        cv2.imwrite(image.area_image.url[1:],area_image)
 
         contours_min = np.argmin(ctr_s, axis = 0)
         contours_max = np.argmax(ctr_s, axis = 0)
@@ -255,17 +255,17 @@ def detection(request):
         x_Max = (ctr_s[contours_max[0][0]][0][0],ctr_s[contours_max[0][0]][0][1])
         y_Max = (ctr_s[contours_max[0][1]][0][0],ctr_s[contours_max[0][1]][0][1])
 
-        cv2.circle(length_img, x_Min, 3, Distance.black_color, -1)
-        cv2.circle(length_img, y_Min, 3, Distance.black_color, -1)
-        cv2.circle(length_img, x_Max, 3, Distance.black_color, -1)
-        cv2.circle(length_img, y_Max, 3, Distance.black_color, -1)
+        cv2.circle(length_image, x_Min, 3, Distance.black_color, -1)
+        cv2.circle(length_image, y_Min, 3, Distance.black_color, -1)
+        cv2.circle(length_image, x_Max, 3, Distance.black_color, -1)
+        cv2.circle(length_image, y_Max, 3, Distance.black_color, -1)
 
-        cv2.line(length_img, x_Min, y_Max, Distance.blue_color, 2)
-        cv2.line(length_img, x_Max, y_Min, Distance.green_color, 2)
-        cv2.line(length_img, x_Min, y_Min, Distance.red_color, 2)
-        cv2.line(length_img, x_Max, y_Max, Distance.yellow_color, 2)
+        cv2.line(length_image, x_Min, y_Max, Distance.blue_color, 2)
+        cv2.line(length_image, x_Max, y_Min, Distance.green_color, 2)
+        cv2.line(length_image, x_Min, y_Min, Distance.red_color, 2)
+        cv2.line(length_image, x_Max, y_Max, Distance.yellow_color, 2)
 
-        cv2.imwrite(image.length_image.url[1:], length_img)
+        cv2.imwrite(image.length_image.url[1:], length_image)
 
         green_length = Distance.distance(x_Max,y_Min)
         blue_length = Distance.distance(x_Min, y_Max)
@@ -281,9 +281,13 @@ def detection(request):
 
         return render(request, 'detection.html', {
             'image': image,
+            'flatting_image': flatting_image,
+            'length_image': length_image,
+            'area_image': area_image,
             'mkr_length' : Distance.marker_length,
-            'width' : int(width_ratio * 500),
-            'height' : int(height_ratio * 500),
+            'std_length':std_length,
+            'width' : int(width_ratio * 250),
+            'height' : int(height_ratio * 250),
             'green': real_green,
             'red': real_red,
             'yellow': real_yellow,
