@@ -16,66 +16,67 @@
           <span>회원가입</span>
         </div>
       </hedaer>
-      <section class="inside">
+      <!-- <section class="inside">
         <h3>
           Monday cupping class open! <br />
           eget arcu felis
         </h3>
-      </section>
+      </section> -->
 
       <main id="main">
         <div class="container">
           <div class="image">
-            <img src="{{image.image.url}}" alt="{{image.image}}" width={{width}}
-            height={{height}}/>
+            <img src="{{image.image.url}}" alt="{{image.image}}" width="640px"
+            height="480px"/>
           </div>
           <div class="image">
-            <img src="{{image.image.url}}" alt="{{image.image}}" width={{width}}
-            height={{height}}/>
+            <img src="{{image.flatting_image.url}}" alt="{{image.image}}" width="640px"
+            height="480px"/>
           </div>
           <div class="desc">
             <div class="title"><span>분석 결과</span></div>
             <div class="box"></div>
           </div>
           <div class="image">
-            <img src="{{image.image.url}}" alt="{{image.image}}" width={{width}}
-            height={{height}}/>
+            <img src="{{image.image.url}}" alt="{{image.image}}" width="640px"
+            height="480px"/>
           </div>
           <div class="image" style="position: relative;">
-            <img src="{{image.image.url}}" alt="{{image.image}}" width={{width}}
-            height={{height}} style="position: absolute"/>
-            <canvas id="canvas" style="position: absolute" width={{width}} height={{height}}></canvas>
+            <img src="{{image.flatting_image.url}}" alt="{{image.image}}" width="640px"
+            height="480px" style="position: absolute"/>
+            <canvas id="canvas" style="position: absolute" width="640px"
+            height="480px"></canvas>
           </div>
           <div class="desc">
             <div class="title"><span>분석 결과</span></div>
-            <div class="passive">
-              <div class="passive_length">
-                <p class="length">길이 :</p>
-                <p id="result">0cm</p>
+              <div class="passive">
+                <div class="passive_length">
+                  <p class="length">길이 :</p>
+                  <p id="result">0cm</p>
+                </div>
+                <div class="passive_area">
+                  <p class="area">넓이 :</p>
+                  <p id="line_area"></p>
+                </div>
               </div>
-              <div class="passive_area">
-                <p class="area">넓이 :</p>
-                <p id="line_area"></p>
+              <div class="save">
+                <button class="save_btn">저장</button>
               </div>
             </div>
-            <div class="save">
-              <button class="save_btn">저장</button>
-            </div>
-          </div>
           <div class="image">
             <img
               src="{{image.length_image.url}}"
               alt="{{image.length_image}}"
-              width={{width}}
-              height={{height}}
+              width="640px"
+              height="480px"
             />
           </div>
           <div class="image">
             <img
               src="{{image.area_image.url}}"
               alt="{{image.area_image.url}}"
-              width={{width}}
-              height={{height}}
+              width="640px"
+              height="480px"
             />
           </div>
           <div class="desc">

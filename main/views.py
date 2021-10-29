@@ -140,24 +140,24 @@ def detection(request):
         pts1 = Marker.flatting(corners, ids)
 
         # 사진의 넓이, 높이 (픽셀)
-        height = max(np.linalg.norm(pts1[0] - pts1[1]), np.linalg.norm(pts1[2] - pts1[3]))
-        width = max(np.linalg.norm(pts1[0] - pts1[3]), np.linalg.norm(pts1[1] - pts1[2]))
-
+        height = max(np.linalg.norm(pts1[0] - pts1[3]), np.linalg.norm(pts1[1] - pts1[2]))
+        width = max(np.linalg.norm(pts1[0] - pts1[1]), np.linalg.norm(pts1[2] - pts1[3]))
         # 평탄화 될 사진의 비율 계산
-        width_ratio = (height / width)
-        height_ratio = 1
+        width_ratio = width / 640
+        height_ratio = height / 480
 
         # pts2 변환 후 사진의 네 좌표
         pts2 = np.array([
                 [10, 10],
-                [int(width_ratio * 500)-10, 10],
-                [int(width_ratio * 500)-10, int(height_ratio * 500)-10],
-                [10, int(height_ratio * 500)-10]
+                [int(640)-10, 10],
+                [int(640)-10, int(480)-10],
+                [10, int(480)-10]
             ], dtype=np.float32)
+
         # pts1의 좌표에 표시. perspective 변환 후 이동 점 확인.
         M = cv2.getPerspectiveTransform(pts1, pts2)
-        dst = cv2.warpPerspective(flatting_image, M=M, dsize=(int(width_ratio * 500), height_ratio * 500))
-        
+        dst = cv2.warpPerspective(flatting_image, M, dsize=(640,480))
+        print(dst)
         # 변환된 사진을 이용하여 픽셀간 거리 구하기
         corners, ids = Marker.detect_marker(dst)
 
@@ -286,8 +286,6 @@ def detection(request):
             'area_image': area_image,
             'mkr_length' : Distance.marker_length,
             'std_length':std_length,
-            'width' : int(width_ratio * 250),
-            'height' : int(height_ratio * 250),
             'green': real_green,
             'red': real_red,
             'yellow': real_yellow,
