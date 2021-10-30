@@ -42,9 +42,10 @@
             height={{height}}/>
           </div>
           <div class="image" style="position: relative;">
-            <img src="{{image.image.url}}" alt="{{image.image}}" width={{width}}
-            height={{height}} style="position: absolute"/>
-            <canvas id="canvas" style="position: absolute" width={{width}} height={{height}}></canvas>
+            <img src="{{image.flatting_image.url}}" alt="{{image.image}}" width={{flat_width}}
+            height={{flat_height}} style="position: absolute"/>
+            <canvas id="canvas" style="position: absolute" width={{flat_width}}
+            height={{flat_height}}></canvas>
           </div>
           <div class="desc">
             <div class="title"><span>분석 결과</span></div>
@@ -66,16 +67,16 @@
             <img
               src="{{image.length_image.url}}"
               alt="{{image.length_image}}"
-              width={{width}}
-              height={{height}}
+              width={{flat_width}}
+              height={{flat_height}}
             />
           </div>
           <div class="image">
             <img
               src="{{image.area_image.url}}"
               alt="{{image.area_image.url}}"
-              width={{width}}
-              height={{height}}
+              width={{flat_width}}
+              height={{flat_height}}
             />
           </div>
           <div class="desc">

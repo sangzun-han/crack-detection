@@ -58,7 +58,6 @@ def upload(request):
         # pts1의 좌표에 표시. perspective 변환 후 이동 점 확인.
         M = cv2.getPerspectiveTransform(pts1, pts2)
         dst = cv2.warpPerspective(img, M=M, dsize=(int(width_ratio * 500), height_ratio * 500))
-        
 
         # 변환된 사진을 이용하여 픽셀간 거리 구하기
         corners,ids = Marker.detect_marker(dst)
@@ -138,7 +137,6 @@ def detection(request):
 
         # 변환 전 사진의 네 좌표 좌상 우상 우하 좌하 순
         pts1 = Marker.flatting(corners, ids)
-
         # 사진의 넓이, 높이 (픽셀)
         height = max(np.linalg.norm(pts1[0] - pts1[1]), np.linalg.norm(pts1[2] - pts1[3]))
         width = max(np.linalg.norm(pts1[0] - pts1[3]), np.linalg.norm(pts1[1] - pts1[2]))
@@ -157,7 +155,7 @@ def detection(request):
         # pts1의 좌표에 표시. perspective 변환 후 이동 점 확인.
         M = cv2.getPerspectiveTransform(pts1, pts2)
         dst = cv2.warpPerspective(flatting_image, M=M, dsize=(int(width_ratio * 500), height_ratio * 500))
-        
+
         # 변환된 사진을 이용하여 픽셀간 거리 구하기
         corners, ids = Marker.detect_marker(dst)
 
@@ -203,6 +201,9 @@ def detection(request):
         cv2.line(dst,tlbl,tlbr,(0,0,255),1)
         std_length = Distance.distance(tlbl,tlbr)
         dst = dst[ tlbr[1]:bltr[1], tlbr[0]: trbl[0] ]
+
+        flat_height, flat_width = dst.shape[:2]
+        print(flat_height, flat_width)
 
         cv2.imwrite(image.flatting_image.url[1:], dst)
 
@@ -255,15 +256,16 @@ def detection(request):
         x_Max = (ctr_s[contours_max[0][0]][0][0],ctr_s[contours_max[0][0]][0][1])
         y_Max = (ctr_s[contours_max[0][1]][0][0],ctr_s[contours_max[0][1]][0][1])
 
-        cv2.circle(length_image, x_Min, 3, Distance.black_color, -1)
-        cv2.circle(length_image, y_Min, 3, Distance.black_color, -1)
-        cv2.circle(length_image, x_Max, 3, Distance.black_color, -1)
-        cv2.circle(length_image, y_Max, 3, Distance.black_color, -1)
 
         cv2.line(length_image, x_Min, y_Max, Distance.blue_color, 2)
         cv2.line(length_image, x_Max, y_Min, Distance.green_color, 2)
         cv2.line(length_image, x_Min, y_Min, Distance.red_color, 2)
         cv2.line(length_image, x_Max, y_Max, Distance.yellow_color, 2)
+
+        cv2.circle(length_image, x_Min, 3, Distance.black_color, -1)
+        cv2.circle(length_image, y_Min, 3, Distance.black_color, -1)
+        cv2.circle(length_image, x_Max, 3, Distance.black_color, -1)
+        cv2.circle(length_image, y_Max, 3, Distance.black_color, -1)
 
         cv2.imwrite(image.length_image.url[1:], length_image)
 
@@ -286,8 +288,10 @@ def detection(request):
             'area_image': area_image,
             'mkr_length' : Distance.marker_length,
             'std_length':std_length,
-            'width' : int(width_ratio * 250),
-            'height' : int(height_ratio * 250),
+            'width' : int(width_ratio * 500),
+            'height' : int(height_ratio * 500),
+            'flat_height':flat_height, 
+            'flat_width': flat_width,
             'green': real_green,
             'red': real_red,
             'yellow': real_yellow,

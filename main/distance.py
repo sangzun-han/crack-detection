@@ -1,5 +1,5 @@
 class Distance:
-  marker_length = 3.1
+  marker_length = 2.8
   black_color = (0,0,0)
   blue_color = (255, 0, 0)
   green_color = (0, 255, 0)
