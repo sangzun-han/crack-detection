@@ -109,6 +109,7 @@ def detection(request):
         # model  photo post to save
         image = Photo()
         image.image = request.FILES['image']
+        image.crop_image = request.FILES['image']
         image.flatting_image = request.FILES['image']
         image.length_image = request.FILES['image']
         image.area_image = request.FILES['image']
@@ -155,7 +156,9 @@ def detection(request):
         # pts1의 좌표에 표시. perspective 변환 후 이동 점 확인.
         M = cv2.getPerspectiveTransform(pts1, pts2)
         dst = cv2.warpPerspective(flatting_image, M=M, dsize=(int(width_ratio * 500), height_ratio * 500))
-
+        crop_image = dst.copy()
+        cv2.imwrite(image.crop_image.url[1:], crop_image)
+        
         # 변환된 사진을 이용하여 픽셀간 거리 구하기
         corners, ids = Marker.detect_marker(dst)
 
@@ -203,7 +206,6 @@ def detection(request):
         dst = dst[ tlbr[1]:bltr[1], tlbr[0]: trbl[0] ]
 
         flat_height, flat_width = dst.shape[:2]
-        print(flat_height, flat_width)
 
         cv2.imwrite(image.flatting_image.url[1:], dst)
 
@@ -279,10 +281,9 @@ def detection(request):
         real_red = Distance.real_distance(Distance.marker_length, std_length, red_length)
         real_yellow = Distance.real_distance(Distance.marker_length,std_length, yellow_length)
 
-        
-
         return render(request, 'detection.html', {
             'image': image,
+            'crop_image': crop_image,
             'flatting_image': flatting_image,
             'length_image': length_image,
             'area_image': area_image,

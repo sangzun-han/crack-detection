@@ -9,7 +9,7 @@
     <title>Document</title>
   </head>
     <body>
-      <hedaer id="header">
+      <hedaer class="header">
         <h1 class="logo">crack</h1>
         <div class="menu">
           <span>로그인</span>
@@ -18,46 +18,30 @@
       </hedaer>
       <section class="inside">
         <h3>
-          Monday cupping class open! <br />
-          eget arcu felis
+          균열 탐지 <br />
+          균열의 길이 측정
         </h3>
       </section>
-
       <main id="main">
         <div class="container">
           <div class="image">
             <img src="{{image.image.url}}" alt="{{image.image}}" />
           </div>
           <div class="image">
-            <img src="{{image.image.url}}" alt="{{image.image}}" />
+            <img src="{{image.crop_image.url}}" alt="{{image.image}}" />
           </div>
           <div class="desc">
             <div class="title"><span>분석 결과</span></div>
-            <div class="box"></div>
-          </div>
-          <div class="image">
-            <img src="{{image.image.url}}" alt="{{image.image}}" />
-          </div>
-          <div class="image" style="position: relative;">
-            <img src="{{image.flatting_image.url}}" alt="{{image.image}}" style="position: absolute"/>
-            <canvas id="canvas" style="position: absolute" ></canvas>
-          </div>
-          <div class="desc">
-            <div class="title"><span>분석 결과</span></div>
-            <div class="passive">
-              <div class="passive_length">
-                <p class="length">길이 :</p>
-                <p id="result">0cm</p>
-              </div>
-              <div class="passive_area">
-                <p class="area">넓이 :</p>
-                <p id="line_area"></p>
-              </div>
-            </div>
-            <div class="save">
-              <button class="save_btn">저장</button>
+            <div class="box">
+              {% if crop_image is not None %}
+              <p>왼쪽 : 원본 이미지</p>
+              <p>오른쪽 : 평탄화 이미지</p>
+              {% else %}
+              <p>평탄화 실패</p>
+              {% endif %}
             </div>
           </div>
+ 
           <div class="image">
             <img
               src="{{image.length_image.url}}"
@@ -171,7 +155,7 @@
         let b = point[point.length - 2];
         let sub_length = ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** (1 / 2);
         let real_length = parseFloat(
-          ('{{mkr_length}}' * sub_length) / '{{std_length}}'
+          ('{{mkr_length}}' * sub_length) / '{{std_length}}' * (500/412)
         );
 
         length.push(real_length);
