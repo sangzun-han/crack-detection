@@ -6,9 +6,8 @@ from django.db import models
 class Photo(models.Model):
     image = models.ImageField(upload_to='images/', null=False)
     flatting_image = models.ImageField(upload_to='flatting/', null=True)
-    crop_image = models.ImageField(upload_to='crop/', null=True)
-    length_image = models.ImageField(upload_to='length/', null=True)
-    area_image = models.ImageField(upload_to='area/', null=True)
+    origin_width = models.FloatField(null=True)
+    origin_height = models.FloatField(null=True)
     
     def __str__(self):
         return str(self.id)
