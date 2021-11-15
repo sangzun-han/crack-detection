@@ -48,13 +48,13 @@ def canvas_page(request):
             [int(bottom_left[0]),int(bottom_left[1])]
         ])
 
+        
         pixelWidth = max(np.linalg.norm(pts1[0] - pts1[1]), np.linalg.norm(pts1[2] - pts1[3]))
         pixelHeight = max(np.linalg.norm(pts1[0] - pts1[3]), np.linalg.norm(pts1[1] - pts1[2]))
 
         width_ratio = width/height
         height_ratio = 1
-        diagonal = int((width**2 + height**2)**0.5)
-        standardLength = int((width_ratio*pixelHeight**2 + height_ratio*pixelHeight**2)**0.5)
+
         pts2 = np.array([
                 [0, 0],
                 [int(width_ratio*pixelHeight),0],
@@ -67,10 +67,10 @@ def canvas_page(request):
         cv2.imwrite(image.flatting_image.url[1:], dst)
         return render(request, 'test.html', {
             'image': image,
-            'diagonal':diagonal,
+            'height': height,
             'imgWidth': int(width_ratio*pixelHeight),
             'imgHeight': int(height_ratio*pixelHeight),
-            'standardLength': standardLength,
+            
         })
 
 def result_page(request):
