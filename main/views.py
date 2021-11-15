@@ -29,7 +29,6 @@ def info_upload(request, pk):
 
 def canvas_page(request):
     if request.method == 'POST':
-        print(request.POST)
         pk = request.POST['pk']
         image = get_object_or_404(Photo,pk=pk)
         img = cv2.imread(image.image.url[1:])
@@ -54,20 +53,25 @@ def canvas_page(request):
 
         width_ratio = width/height
         height_ratio = 1
-
+        diagonal = int((width**2 + height**2)**0.5)
+        standardLength = int((width_ratio*pixelHeight**2 + height_ratio*pixelHeight**2)**0.5)
         pts2 = np.array([
                 [0, 0],
                 [int(width_ratio*pixelHeight),0],
                 [int(width_ratio*pixelHeight), int(height_ratio*pixelHeight)],
                 [0, int(height_ratio*pixelHeight)]
         ], dtype=np.float32)
-
+        
         M = cv2.getPerspectiveTransform(pts1, pts2)
         dst = cv2.warpPerspective(img, M=M, dsize=(int(width_ratio*pixelHeight), int(height_ratio*pixelHeight)))
         cv2.imwrite(image.flatting_image.url[1:], dst)
         return render(request, 'test.html', {
             'image': image,
+            'diagonal':diagonal,
+            'imgWidth': int(width_ratio*pixelHeight),
+            'imgHeight': int(height_ratio*pixelHeight),
+            'standardLength': standardLength,
         })
 
 def result_page(request):
-    return 0
+    return 0 
