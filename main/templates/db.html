@@ -1,0 +1,71 @@
+{% extends 'base.html' %} {% block content1 %}
+<style>
+  a {
+    color: black;
+    text-decoration: none;
+    padding: 0 5px;
+  }
+  a:hover {
+    color: black;
+    text-decoration: underline;
+  }
+  a.selected {
+    font-weight: 500;
+    color: white;
+    border: 1px solid #777;
+    border-radius: 3px;
+    background-color: rgb(163, 160, 160);
+  }
+  .page {
+    margin: 0 0 10px 0;
+  }
+</style>
+<table class="table" style="vertical-align: middle">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">사진</th>
+      <th scope="col">현황</th>
+      <th scope="col">원인</th>
+      <th scope="col">조치방안</th>
+      <th scope="col">평탄화 작업</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for page_obj in page_obj %}
+    <tr>
+      <th scope="row">{{page_obj.pk}}</th>
+      <td>
+        <img src="{{page_obj.image.url}}" alt="image" style="width: 200px" />
+      </td>
+      <td>{{page_obj.state}}</td>
+      <td>{{page_obj.cause}}</td>
+      <td>{{page_obj.solution}}</td>
+      {% if page_obj.isFlattened %}
+      <td>O</td>
+      {% else %}
+      <td>X</td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="page" style="text-align: center">
+  {% if page_obj.has_previous %}
+  <a class="before" href="?page={{page_obj.previous_page_number}}">이전</a>
+  {% endif %} 
+  
+
+  {% for page_number in page_obj.paginator.page_range %} 
+  {% if page_number >= page_obj.number|add:-2 and page_number <= page_obj.number|add:2 %} 
+  
+  {% if page_number == page_obj.number %}
+  <a href="" class="selected">{{page_number}}</a>
+  {% else %}
+  <a href="?page={{page_number}}">{{page_number}}</a>
+  {% endif %} {% endif %} {% endfor %} {% if page_obj.has_next %}
+  <a class="after" href="?page={{page_obj.next_page_number}}">다음 </a>
+  {% endif %}
+</div>
+
+{% endblock %}

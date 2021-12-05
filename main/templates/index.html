@@ -1,55 +1,24 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{% static 'css/index.css' %}" />
-    <script
-      defer
-      src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"
-    ></script>
-    <script defer src="{% static 'js/index.js' %}"></script>
-    <title>Document</title>
-  </head>
-  <body>
-    <main id="main">
-      <form class="file-upload" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <button
-          class="file-upload-btn"
-          type="button"
-          onclick="$('.file-upload-input').trigger( 'click' )"
-        >
-          Add Image
-        </button>
-        <div class="image-upload-wrap">
-          <input
-            class="file-upload-input"
-            type="file"
-            name="image"
-            onchange="readURL(this);"
-            accept="image/*"
-          />
-          <div class="drag-text">
-            <h3>Drag and drop a file or select add Image</h3>
-          </div>
+{% extends "base.html" %}
+    {% block content1 %}    
+    <!-- Header-->
+    <header class="bg-danger py-5">
+      <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white ">
+          <h1 class="display-4 fw-bolder">이미지 업로드</h1>
+          <p class="lead fw-normal text-white-50 mb-5 ">
+            이미지를 업로드 해주세요 :)
+          </p>
+          <!-- img upload form -->
+          <form action="{% url 'index' %}" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+            <input class="form-control form-control-lg mb-5" id="formFileLg" type="file" name="uploadImg">
+            <button type="submit" class="btn btn-outline-light btn-lg mb-5">업로드</button>
+          </form>
         </div>
-        <div class="file-upload-content">
-          <img class="file-upload-image" src="#" alt="your image" />
-          <div class="image-title-wrap">
-            <input
-              type="submit"
-              class="start-button"
-              formaction="{% url 'index' %}"
-              value="수동탐지"
-            />
-          </div>
-        </div>
-      </form>
-      <p>{{error}}</p>
-    </main>
-  </body>
-  <script></script>
+      </div>
+    </header>
+    {% endblock %}
+    {% block content2 %}
+    <div class="content" style="min-height: 100vh;"></div>
+    {% endblock %} 
 </html>
