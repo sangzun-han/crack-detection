@@ -20,15 +20,25 @@
     margin: 0 0 10px 0;
   }
 </style>
-<table class="table" style="vertical-align: middle">
+<table class="table" id="table" style="vertical-align: middle; text-align:center">
+  <div class="d-flex justify-content-end">
+  <div class="input-group rounded w-25 p-3" >
+    <input type="search" class="form-control rounded" id="input" placeholder="Search" aria-label="Search"
+    aria-describedby="search-addon" onkeyup="search()"/>
+    <span class="input-group-text border-0" id="search-addon">
+      <i class="fa fa-search"></i>
+    </span>
+  </div>
+  </div>
   <thead>
     <tr>
-      <th scope="col">#</th>
-      <th scope="col">사진</th>
-      <th scope="col">현황</th>
-      <th scope="col">원인</th>
-      <th scope="col">조치방안</th>
-      <th scope="col">평탄화 작업</th>
+      <th scope="col" style="width:20px">#</th>
+      <th scope="col" style="width:200px">사진</th>
+      <th scope="col" style="width:250px">현황</th>
+      <th scope="col" style="width:150px">원인</th>
+      <th scope="col" style="width:150px">조치방안</th>
+      <th scope="col" style="width:100px">평탄화 작업</th>
+    </div>
     </tr>
   </thead>
   <tbody>
