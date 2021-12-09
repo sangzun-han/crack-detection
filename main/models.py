@@ -13,10 +13,12 @@ class Photo(models.Model):
     state = models.CharField(null=True, max_length=255)
     cause = models.CharField(null=True, max_length=255)
     solution = models.CharField(null=True, max_length=255)
-    category = models.ForeignKey('Category', null=True, on_delete=models.SET_NULL)
+    category = models.ForeignKey(
+        'Category', null=True, on_delete=models.SET_NULL)
+
     def __str__(self):
         return str(self.id)
 
+
 class Category(models.Model):
-    name = models.CharField(null=True ,unique=True, max_length=255)
-    
+    name = models.CharField(null=True, unique=True, max_length=255)

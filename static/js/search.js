@@ -26,11 +26,16 @@ searchField.addEventListener("keyup", (event) => {
         } else {
           result.style.display = "none";
           data.map((item) => {
+            if (item.isFlattened == "True") {
+              item.isFlattened = "O";
+            } else {
+              item.isFlattened = "X";
+            }
             tbody.innerHTML += `
               <tr>
               <td scope="row">${item.id}</td>
               <td>
-                <img src="/media/${item.image}" alt="image" style="width: 200px" />
+               <a href=""><img src="/media/${item.image}" alt="image" style="width: 200px" /></a>
               </td>
               <td>${item.state}</td>
               <td>${item.cause}</td>

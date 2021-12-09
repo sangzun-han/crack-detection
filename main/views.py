@@ -6,8 +6,9 @@ import numpy as np
 import cv2
 
 from django.core.paginator import Paginator
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 import json
+
 # Create your views here.
 
 
@@ -108,12 +109,21 @@ def db(request):
     return render(request, 'db.html', {'page_obj': page_obj})
 
 
+def dbDetail(request, pk):
+    try:
+        photo = Photo.objects.get(pk=pk)
+    except:
+        raise Http404("해당 게시물을 찾을 수 없습니다.")
+    return render(request, 'dbDetail.html', {
+        'img': photo
+    })
+
+
 def search(request):
     if request.method == 'POST':
         search_str = json.loads(request.body).get('searchText')
 
-        expenses = Photo.objects.filter(state__icontains=search_str) | Photo.objects.filter(
-            category__name__icontains=search_str)
+        expenses = Photo.objects.filter(category__name__icontains=search_str)
         data = expenses.values()
         return JsonResponse(list(data), safe=False)
 

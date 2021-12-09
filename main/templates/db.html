@@ -1,4 +1,7 @@
-{% extends 'base.html' %} {% block content1 %}
+{% extends 'base.html' %} 
+{% load static %}
+
+{% block content %}
 <style>
   a {
     color: black;
@@ -55,7 +58,7 @@
     <tr>
       <td scope="row">{{page_obj.pk}}</td>
       <td>
-        <img src="{{page_obj.image.url}}" alt="image" style="width: 200px" />
+       <a href="{% url 'dbDetail' pk=page_obj.pk %}"><img src="{{page_obj.image.url}}" alt="image" style="width: 200px" /></a> 
       </td>
       <td>{{page_obj.state}}</td>
       <td>{{page_obj.cause}}</td>
@@ -110,5 +113,8 @@
   <a class="after" href="?page={{page_obj.next_page_number}}">다음 </a>
   {% endif %}
 </div>
+{% endblock %}
 
+{% block script %}
+  <script type="text/javascript" src="{% static 'js/search.js' %}" ></script>
 {% endblock %}
