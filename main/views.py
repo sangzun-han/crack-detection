@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from numpy import core, str_
-from .models import Photo
+from .models import Photo, Category
 from .distance import Distance
 import numpy as np
 import cv2
 
 from django.core.paginator import Paginator
-
+from django.http import JsonResponse
+import json
 # Create your views here.
 
 
@@ -104,8 +105,17 @@ def db(request):
     page = request.GET.get('page', '1')
     paginator = Paginator(dateList, '5')  # Paginator(분할될 객체, 페이지 당 담길 객체수)
     page_obj = paginator.page(page)  # 페이지 번호를 받아 해당 페이지를 리턴 get_page 권장
-    print(page_obj)
     return render(request, 'db.html', {'page_obj': page_obj})
+
+
+def search(request):
+    if request.method == 'POST':
+        search_str = json.loads(request.body).get('searchText')
+
+        expenses = Photo.objects.filter(state__icontains=search_str) | Photo.objects.filter(
+            category__name__icontains=search_str)
+        data = expenses.values()
+        return JsonResponse(list(data), safe=False)
 
 
 def categories(request):

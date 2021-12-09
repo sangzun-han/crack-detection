@@ -20,31 +20,40 @@
     margin: 0 0 10px 0;
   }
 </style>
-<table class="table" id="table" style="vertical-align: middle; text-align:center">
+<table
+  class="table origin-table"
+  id="table"
+  style="vertical-align: middle; text-align: center"
+>
   <div class="d-flex justify-content-end">
-  <div class="input-group rounded w-25 p-3" >
-    <input type="search" class="form-control rounded" id="input" placeholder="Search" aria-label="Search"
-    aria-describedby="search-addon" onkeyup="search()"/>
-    <span class="input-group-text border-0" id="search-addon">
-      <i class="fa fa-search"></i>
-    </span>
-  </div>
+    <div class="input-group rounded w-25 p-3">
+      <input
+        type="text"
+        class="form-control rounded"
+        id="searchField"
+        placeholder="Search"
+        aria-label="Search"
+        aria-describedby="search-addon"
+      />
+      <span class="input-group-text border-0" id="search-addon">
+        <i class="fa fa-search"></i>
+      </span>
+    </div>
   </div>
   <thead>
     <tr>
-      <th scope="col" style="width:20px">#</th>
-      <th scope="col" style="width:200px">사진</th>
-      <th scope="col" style="width:250px">현황</th>
-      <th scope="col" style="width:150px">원인</th>
-      <th scope="col" style="width:150px">조치방안</th>
-      <th scope="col" style="width:100px">평탄화 작업</th>
-    </div>
+      <th scope="col" style="width: 20px">#</th>
+      <th scope="col" style="width: 200px">사진</th>
+      <th scope="col" style="width: 250px">현황</th>
+      <th scope="col" style="width: 150px">원인</th>
+      <th scope="col" style="width: 150px">조치방안</th>
+      <th scope="col" style="width: 100px">평탄화 작업</th>
     </tr>
   </thead>
   <tbody>
     {% for page_obj in page_obj %}
     <tr>
-      <th scope="row">{{page_obj.pk}}</th>
+      <td scope="row">{{page_obj.pk}}</td>
       <td>
         <img src="{{page_obj.image.url}}" alt="image" style="width: 200px" />
       </td>
@@ -60,20 +69,44 @@
     {% endfor %}
   </tbody>
 </table>
+
+<p class="result lead text-center" style="display: none">결과를 찾을 수 없습니다.</p
+>
+<div class="table-output">
+  <table
+    class="table table-output"
+    style="vertical-align: middle; text-align: center"
+  >
+    <thead>
+      <tr>
+        <th scope="col" style="width: 20px">#</th>
+        <th scope="col" style="width: 200px">사진</th>
+        <th scope="col" style="width: 250px">현황</th>
+        <th scope="col" style="width: 150px">원인</th>
+        <th scope="col" style="width: 150px">조치방안</th>
+        <th scope="col" style="width: 100px">평탄화 작업</th>
+      </tr>
+    </thead>
+    <tbody class="table-body"></tbody>
+  </table>
+</div>
+
 <div class="page" style="text-align: center">
   {% if page_obj.has_previous %}
   <a class="before" href="?page={{page_obj.previous_page_number}}">이전</a>
   {% endif %} 
   
-
   {% for page_number in page_obj.paginator.page_range %} 
-  {% if page_number >= page_obj.number|add:-2 and page_number <= page_obj.number|add:2 %} 
+    {% if page_number >= page_obj.number|add:-2 and page_number <= page_obj.number|add:2 %} 
+      {% if page_number == page_obj.number %}
+        <a href="" class="selected">{{page_number}}</a>
+      {% else %}
+        <a href="?page={{page_number}}">{{page_number}}</a>
+      {% endif %} 
+    {% endif %}
+  {% endfor %} 
   
-  {% if page_number == page_obj.number %}
-  <a href="" class="selected">{{page_number}}</a>
-  {% else %}
-  <a href="?page={{page_number}}">{{page_number}}</a>
-  {% endif %} {% endif %} {% endfor %} {% if page_obj.has_next %}
+  {% if page_obj.has_next %}
   <a class="after" href="?page={{page_obj.next_page_number}}">다음 </a>
   {% endif %}
 </div>
