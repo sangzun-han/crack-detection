@@ -109,6 +109,9 @@ def db(request):
     return render(request, 'db.html', {'page_obj': page_obj})
 
 
+def categories(request):
+    return render(request, 'categories.html')
+
 def dbDetail(request, pk):
     try:
         photo = Photo.objects.get(pk=pk)
@@ -127,6 +130,11 @@ def search(request):
         data = expenses.values()
         return JsonResponse(list(data), safe=False)
 
-
-def categories(request):
-    return render(request, 'categories.html')
+def flatting(request,pk):
+    try:
+        photo = Photo.objects.get(pk=pk)
+    except:
+        raise Http404("해당 게시물을 찾을 수 없습니다.")
+    return render(request, 'flatting.html', {
+        'img': photo
+    })

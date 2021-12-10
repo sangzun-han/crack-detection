@@ -11,6 +11,7 @@ urlpatterns = [
     path('categories/', views.categories, name="categories"),
     path('info-process/<pk>', views.infoProcess, name="infoProcess"),
     path('search', csrf_exempt(views.search), name="search"),
-    path('db/<pk>', views.dbDetail, name="dbDetail")
+    path('db/<pk>', views.dbDetail, name="dbDetail"),
+    path('flatting/<pk>',views.flatting, name="flatting"),
     # path('detection/', views.detection, name='detection')
 ]

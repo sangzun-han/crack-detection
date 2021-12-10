@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<canvas id="canvas">
+</canvas>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  const image = new Image();
+  image.src = '{{img.image.url}}'
+
+  const width = image.width;
+  const height = image.height;
+
+
+  image.addEventListener('load', function () {
+    let ctx = document.getElementById("canvas").getContext("2d");
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(image, 0, 0, width, height)
+  })
+
+</script>
+{% endblock %}
