@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+  <img src="{{image.flatting_image.url}}" class="position-absolute" />
+  <canvas class="position-absolute" id="canvas" width="{{imgWidth}}" height="{{imgHeight}}" onclick="clickEvent(event)">
+  </canvas>
+</div>
+<div class="d-flex align-items-center justify-content-center">
+  <p class="mb-0 mt-0 fs-2" id="result">0mm</p>
+  <button type="button" class="btn btn-primary">저장하기</button>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  let points = [];
+  let length = [];
+
+  function change(sum) {
+    let x = document.getElementById("result").innerText = sum + 'mm';
+  }
+
+  function clickEvent(event) {
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    ctx.strokeStyle = "black"
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+    ctx.arc(event.offsetX, event.offsetY, 1, 0, Math.PI * 2);
+    ctx.stroke();
+    let x = [event.offsetX, event.offsetY];
+    points.push(x)
+
+    if (points.length >= 2) {
+      let x = points[points.length - 1];
+      let y = points[points.length - 2];
+      let subLength = ((x[0] - y[0]) ** 2 + (x[1] - y[1]) ** 2) ** 0.5;
+      let realLength = parseFloat(
+        ('{{height}}' * subLength / '{{imgHeight}}')
+      )
+
+      length.push(realLength);
+      let sum = Math.round(length.reduce((a, n) => a + n, 0) * 100) / 100;
+      change(sum);
+
+      ctx.beginPath();
+      ctx.moveTo(x[0], x[1]);
+      ctx.lineTo(y[0], y[1]);
+      ctx.stroke()
+    }
+  }
+
+</script>
+{% endblock %}

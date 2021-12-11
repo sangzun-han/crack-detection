@@ -42,39 +42,28 @@ def infoProcess(request, pk):
     return redirect('db')
 
 
-def canvas_page(request):
+def lengthCalc(request):
     if request.method == 'POST':
         pk = request.POST['pk']
         image = get_object_or_404(Photo, pk=pk)
         img = cv2.imread(image.image.url[1:])
 
-        width = int(request.POST['width'])
-        height = int(request.POST['height'])
+        width = image.originWidth
+        height = image.originHeight
 
         # 좌상 우상 우하 좌하
-        top_left = request.POST['w'].split(',')
-        top_right = request.POST['x'].split(',')
-        bottom_right = request.POST['y'].split(',')
-        bottom_left = request.POST['z'].split(',')
+        topLeft = request.POST['x'].split(',')
+        topRight = request.POST['y'].split(',')
+        bottomRight = request.POST['w'].split(',')
+        bottomLeft = request.POST['z'].split(',')
 
         pts1 = np.float32([
-            [int(int(top_left[0])-50), int(int(top_left[1])-50)],
-            [int(int(top_right[0])+50), int(int(top_right[1])-50)],
-            [int(int(bottom_right[0])+50), int(int(bottom_right[1])+50)],
-            [int(int(bottom_left[0])-50), int(int(bottom_left[1]))+50]
+            [int(int(topLeft[0])), int(int(topLeft[1]))],
+            [int(int(topRight[0])), int(int(topRight[1]))],
+            [int(int(bottomRight[0])), int(int(bottomRight[1]))],
+            [int(int(bottomLeft[0])), int(int(bottomLeft[1]))]
         ])
 
-        # 좌표 시작점을 (x+100,y+100)으로 -> 원하는곳의 좌표가 직선으로 X
-
-        # pts1 = np.float32([
-        #     [int((top_left[0])),int(int(top_left[1]))],
-        #     [int((top_right[0])),int(int(top_right[1]))],
-        #     [int((bottom_right[0])),int(int(bottom_right[1]))],
-        #     [int((bottom_left[0])),int(int(bottom_left[1]))]
-        # ])
-
-        pixelWidth = max(np.linalg.norm(
-            pts1[0] - pts1[1]), np.linalg.norm(pts1[2] - pts1[3]))
         pixelHeight = max(np.linalg.norm(
             pts1[0] - pts1[3]), np.linalg.norm(pts1[1] - pts1[2]))
         width_ratio = width/height
@@ -86,18 +75,19 @@ def canvas_page(request):
             [int(width_ratio*pixelHeight), int(height_ratio*pixelHeight)],
             [0, int(height_ratio*pixelHeight)]
         ], dtype=np.float32)
-        print(int(width_ratio*pixelHeight))
-        print(int(height_ratio*pixelHeight))
+
         M = cv2.getPerspectiveTransform(pts1, pts2)
         dst = cv2.warpPerspective(img, M=M, dsize=(
             int(width_ratio*pixelHeight), int(height_ratio*pixelHeight)))
         cv2.imwrite(image.flatting_image.url[1:], dst)
-        return render(request, 'test.html', {
+        image.isFlattened = True
+        image.save()
+
+        return render(request, 'lengthCalc.html', {
             'image': image,
             'height': height,
             'imgWidth': int(width_ratio*pixelHeight),
             'imgHeight': int(height_ratio*pixelHeight),
-
         })
 
 
@@ -112,6 +102,7 @@ def db(request):
 def categories(request):
     return render(request, 'categories.html')
 
+
 def dbDetail(request, pk):
     try:
         photo = Photo.objects.get(pk=pk)
@@ -125,12 +116,16 @@ def dbDetail(request, pk):
 def search(request):
     if request.method == 'POST':
         search_str = json.loads(request.body).get('searchText')
-
         expenses = Photo.objects.filter(category__name__icontains=search_str)
         data = expenses.values()
+        # print(type(data))
+        # for i in data:
+        #     categoryName = i.category.name
+        #     print(i.id)
         return JsonResponse(list(data), safe=False)
 
-def flatting(request,pk):
+
+def flatting(request, pk):
     try:
         photo = Photo.objects.get(pk=pk)
     except:
