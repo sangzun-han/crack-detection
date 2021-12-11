@@ -4,11 +4,10 @@ from .models import Photo, Category
 from .distance import Distance
 import numpy as np
 import cv2
-
 from django.core.paginator import Paginator
 from django.http import JsonResponse, Http404
 import json
-
+from django.db.models import Q
 # Create your views here.
 
 
@@ -90,7 +89,6 @@ def lengthCalc(request):
             'imgHeight': int(height_ratio*pixelHeight),
         })
 
-
 def db(request):
     dateList = Photo.objects.all().order_by('-id')
     page = request.GET.get('page', '1')
@@ -99,8 +97,30 @@ def db(request):
     return render(request, 'db.html', {'page_obj': page_obj})
 
 
+
 def categories(request):
-    return render(request, 'categories.html')
+    photos = Photo.objects.filter(~Q(category = None)).order_by('-id')
+    categories = Category.objects.all()
+    categoryDic = []
+    for i in categories :
+        temp = []
+        temp.append(i.name)
+        for j in photos:
+            if i == j.category:
+                temp.append(j)
+        categoryDic.append(temp)
+    print(categoryDic)
+    if request.method == 'GET':
+        return render(request, 'categories.html',{'lists': categoryDic})
+    else:
+        categoryName = request.POST['newCategory']
+        isUnique = Category.objects.filter(name=categoryName)
+        if len(isUnique) >= 1 :
+            return render(request, 'categories.html',{"resultMsg":"존재하는 카테고리 명입니다."})
+        objCategory = Category()
+        objCategory.name = categoryName
+        objCategory.save()
+        return render(request, 'categories.html',{"resultMsg":"성공"})
 
 
 def dbDetail(request, pk):
