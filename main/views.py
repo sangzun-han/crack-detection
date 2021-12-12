@@ -89,6 +89,7 @@ def lengthCalc(request):
             'imgHeight': int(height_ratio*pixelHeight),
         })
 
+
 def db(request):
     dateList = Photo.objects.all().order_by('-id')
     page = request.GET.get('page', '1')
@@ -97,30 +98,28 @@ def db(request):
     return render(request, 'db.html', {'page_obj': page_obj})
 
 
-
 def categories(request):
-    photos = Photo.objects.filter(~Q(category = None)).order_by('-id')
+    photos = Photo.objects.filter(~Q(category=None)).order_by('-id')
     categories = Category.objects.all()
     categoryDic = []
-    for i in categories :
+    for i in categories:
         temp = []
         temp.append(i.name)
         for j in photos:
             if i == j.category:
                 temp.append(j)
         categoryDic.append(temp)
-    print(categoryDic)
     if request.method == 'GET':
-        return render(request, 'categories.html',{'lists': categoryDic})
+        return render(request, 'categories.html', {'lists': categoryDic})
     else:
         categoryName = request.POST['newCategory']
         isUnique = Category.objects.filter(name=categoryName)
-        if len(isUnique) >= 1 :
-            return render(request, 'categories.html',{"resultMsg":"존재하는 카테고리 명입니다."})
+        if len(isUnique) >= 1:
+            return render(request, 'categories.html', {"resultMsg": "존재하는 카테고리 명입니다."})
         objCategory = Category()
         objCategory.name = categoryName
         objCategory.save()
-        return render(request, 'categories.html',{"resultMsg":"성공"})
+        return render(request, 'categories.html', {"resultMsg": "성공"})
 
 
 def dbDetail(request, pk):
@@ -138,11 +137,10 @@ def search(request):
         search_str = json.loads(request.body).get('searchText')
         expenses = Photo.objects.filter(category__name__icontains=search_str)
         data = expenses.values()
-        # print(type(data))
-        # for i in data:
-        #     categoryName = i.category.name
-        #     print(i.id)
-        return JsonResponse(list(data), safe=False)
+        list_data = list(data)
+        for i in range(len(expenses)):
+            list_data[i]['category_name'] = expenses[i].category.name
+        return JsonResponse(list_data, safe=False)
 
 
 def flatting(request, pk):

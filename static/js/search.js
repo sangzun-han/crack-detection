@@ -31,14 +31,13 @@ searchField.addEventListener("keyup", (event) => {
             } else {
               item.isFlattened = "X";
             }
-            console.log(item);
             tbody.innerHTML += `
               <tr>
               <td scope="row">${item.id}</td>
               <td>
                <a href=""><img src="/media/${item.image}" alt="image" style="width: 200px" /></a>
               </td>
-              <td>${item.category__name}</td>
+              <td>${item.category_name}</td>
               <td>${item.state}</td>
               <td>${item.cause}</td>
               <td>${item.solution}</td>
