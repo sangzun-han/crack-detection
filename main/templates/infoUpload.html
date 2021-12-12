@@ -34,6 +34,14 @@
               name="cause" />
             <input class="form-control me-3 w-100 p-2 mb-2" id="inputQuantity" type="num" placeholder="해결방안"
               name="solution" />
+            
+            <select class="form-select me-3 w-100 p-2 mb-2" id="inputQuantity" name="category">
+              <option value="noselect">선택안하</option>
+              {% for category in category %}
+              <option value="{{category.name}}">{{category.name}}</option>
+              {% endfor %}
+            </select>
+
             <button class="btn btn-outline-danger flex-shrink-0 w-100 p-2" type="submit">
               등록
             </button>

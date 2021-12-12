@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
     {% block content %}    
     <!-- Header-->
     <header class="bg-danger py-5">
@@ -11,11 +12,15 @@
           <!-- img upload form -->
           <form action="{% url 'index' %}" method="post" enctype="multipart/form-data">
               {% csrf_token %}
-            <input class="form-control form-control-lg mb-5" id="formFileLg" type="file" name="uploadImg">
-            <button type="submit" class="btn btn-outline-light btn-lg mb-5">업로드</button>
+            <input class="form-control form-control-lg mb-5" id="formFileLg" type="file" name="uploadImg" onchange="fileCheck()">
+            <button type="submit" class="btn btn-outline-light btn-lg mb-5" id="button" disabled>업로드</button>
           </form>
         </div>
       </div>
     </header>
+    {% endblock %}
+
+    {% block script %}
+    <script type="text/javascript" src="{% static 'js/file.js' %}"></script>
     {% endblock %}
 </html>

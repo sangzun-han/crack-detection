@@ -13,5 +13,7 @@ urlpatterns = [
     path('db/<pk>', views.dbDetail, name="dbDetail"),
     path('flatting/<pk>',views.flatting, name="flatting"),
     path('lengthCalc/', views.lengthCalc, name="lengthCalc"),
+    path('category-detail/<name>', views.categoryDetail,name="categoryDetail"),
+    path("saveCanvas/<pk>", csrf_exempt(views.saveCanvas), name="saveCanvas")
     # path('detection/', views.detection, name='detection')
 ]

@@ -2,30 +2,59 @@
 {% load static %}
 
 {% block content %}
-<div class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-  <img src="{{image.flatting_image.url}}" class="position-absolute" />
-  <canvas class="position-absolute" id="canvas" width="{{imgWidth}}" height="{{imgHeight}}" onclick="clickEvent(event)">
+<div class="py-5 d-flex align-items-center justify-content-center">
+  <!-- <img src="{{image.flatting_image.url}}" class="position-absolute" /> -->
+  <canvas id="canvas" onclick="clickEvent(event)">
   </canvas>
 </div>
-<div class="d-flex align-items-center justify-content-center">
-  <p class="mb-0 mt-0 fs-2" id="result">0mm</p>
-  <button type="button" class="btn btn-primary">저장하기</button>
-</div>
+<form action="">
+  <div class="mt-3 d-flex align-items-center justify-content-center">
+    <p class="p-3 mb-0 mt-0 fs-2" id="crackLength" name="crackLength">0mm</p>
+    <button type="button" class="btn btn-primary" onclick="save()">저장하기</button>
+  </div>
+</form>
 
 {% endblock %}
 
 {% block script %}
 <script>
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const image = new Image();
+  image.src = '{{img.flatting_image.url}}'
+
   let points = [];
   let length = [];
+  
+  function save() {
+    const dataURL = canvas.toDataURL("image/png");
+    let crackLength = document.getElementById("crackLength").innerText;
+    crackLength = crackLength.replace(/[a-z]/g, '')
+    fetch("/saveCanvas/{{img.pk}}",{
+      body: JSON.stringify({ dataURL: dataURL, crackLength: crackLength }),
+      method: "POST",
+      redirect:'follow'
+    })
+    .then(response => {
+      if(response.redirected) {
+        window.location.href = response.url;
+      }
+    })
+  }
+
+  image.addEventListener('load', function() {
+    const width = image.width;
+    const height = image.height;
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(image, 0, 0, width, height)
+  })
 
   function change(sum) {
-    let x = document.getElementById("result").innerText = sum + 'mm';
+    let x = document.getElementById("crackLength").innerText = sum + 'mm';
   }
 
   function clickEvent(event) {
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
     ctx.strokeStyle = "black"
     ctx.lineWidth = 3;
 

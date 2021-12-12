@@ -1,12 +1,15 @@
 {% extends "base.html" %}
+
+{% load static %}
+
 {% block content %}
 <section class="py-5">
   <div class="container px-4 px-lg-5 my-5">
     <div class="row gx-4 gx-lg-5 align-items-center">
-      <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="{{img.image.url}}" alt="..." /></div>
+      <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="{{img.image.url}}" alt="image" /></div>
       <div class="col-md-6">
         {% if img.category.name %}
-        <h1 class="display-5 fw-bolder">카테고리 : {{img.category.name}}</h1>
+        <a class="text-decoration-none text-dark"href="/category-detail/{{img.category.name}}"><h1 class="display-5 fw-bolder">{{img.category.name}}</h1></a>
         {% else %}
         <h1 class="display-5 fw-bolder">카테고리 : X</h1>
         {% endif %}
@@ -14,7 +17,7 @@
         <p class="fs-4">원인 : {{img.cause}}</p>
         <p class="fs-4">조치방안 : {{img.solution}}</p>
         <div class="d-flex">
-          {% if page_obj.isFlattened %}
+          {% if img.isFlattened %}
           <input class="form-control text-center me-3" id="inputQuantity" type="num" disabled value="O"
             style="max-width: 3rem" />
           {% else %}
@@ -30,4 +33,77 @@
     </div>
   </div>
 </section>
+
+<section class="py-5 bg-light">
+  <div class="container px-4 px-lg-5 mt-5">
+      <h2 class="fw-bolder mb-4">관련 이미지</h2>
+      <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-start">
+          <div class="col mb-5">
+              <div class="card h-100">
+                  <img class="card-img-top" src="{{img.image.url}}" alt="image" style="height: 200px"/>
+                  <div class="card-body p-4">
+                      <div class="text-center">
+                          <h5 class="fw-bolder">원본 이미지</h5>
+                      </div>
+                  </div>
+                  <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center">
+                      <button type="button" class="btn btn-outline-dark mt-auto" data-bs-toggle="modal" data-bs-target="#originStaticBackdrop">
+                        View options
+                      </button>  
+                    </div>
+                  </div>
+              </div>
+          </div>
+          <div class="col mb-5">
+              <div class="card h-100">
+                  {% if img.isFlattened %}
+                  <img class="card-img-top" src="{{img.flatting_image.url}}" alt="flattingImage" style="height: 200px"/>
+                  {% else %}
+                  <img class="card-img-top" src="{% static 'img/noimage.png' %}" alt="noimage" style="height: 200px"/>
+                  {% endif %}
+                  <div class="card-body p-4">
+                    <div class="text-center">
+                        <h5 class="fw-bolder">평탄화 이미지</h5>
+                    </div>
+                  </div>
+                  <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center">
+                      <button type="button" class="btn btn-outline-dark mt-auto" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        View options
+                      </button>  
+                    </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+
+ <!-- origin Modal -->
+ <div class="modal fade" id="originStaticBackdrop"  data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="min-width: 50%;">
+    <div class="modal-content"> 
+      <div class="modal-body">
+          <img class="card-img-top" src="{{img.image.url}}" alt="image" />
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- flatting Modal -->
+  <div class="modal fade" id="staticBackdrop"  data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="min-width: 50%;">
+      <div class="modal-content "> 
+        <div class="modal-body d-flex justify-content-center">
+          {% if img.isFlattened %}
+            <img src="{{img.flatting_image.url}}" alt="flattingImage" />
+          {% else %}
+            <img src="{% static 'img/noimage.png' %}" alt="noimage" />
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

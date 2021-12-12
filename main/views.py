@@ -1,13 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from numpy import core, str_
 from .models import Photo, Category
-from .distance import Distance
 import numpy as np
 import cv2
 from django.core.paginator import Paginator
 from django.http import JsonResponse, Http404
 import json
 from django.db.models import Q
+from io import BytesIO
+from PIL import Image
+import re
+import base64
+
+
 # Create your views here.
 
 
@@ -17,7 +22,6 @@ def index(request):
         img.image = request.FILES.get('uploadImg')
         img.flatting_image = request.FILES.get('uploadImg')
         img.save()
-        print(img.image.url)
         return redirect('info-upload/' + str(img.id))
     else:
         return render(request, 'index.html')
@@ -25,18 +29,23 @@ def index(request):
 
 def infoUpload(request, pk):
     photo = get_object_or_404(Photo, pk=pk)
+    category = Category.objects.all()
     return render(request, 'infoUpload.html', {
         'img': photo,
+        'category' : category,
     })
 
 
 def infoProcess(request, pk):
-    photo = get_object_or_404(Photo, pk=pk)
+    photo = Photo.objects.get(pk=pk)
     photo.originWidth = request.POST['width']
     photo.originHeight = request.POST['height']
     photo.state = request.POST['state']
     photo.cause = request.POST['cause']
     photo.solution = request.POST['solution']
+    if request.POST['category'] != 'noselect':
+        category = Category.objects.get(name=request.POST['category'])
+        photo.category = category  
     photo.save()
     return redirect('db')
 
@@ -83,7 +92,7 @@ def lengthCalc(request):
         image.save()
 
         return render(request, 'lengthCalc.html', {
-            'image': image,
+            'img': image,
             'height': height,
             'imgWidth': int(width_ratio*pixelHeight),
             'imgHeight': int(height_ratio*pixelHeight),
@@ -100,26 +109,25 @@ def db(request):
 
 def categories(request):
     photos = Photo.objects.filter(~Q(category=None)).order_by('-id')
-    categories = Category.objects.all()
+    categories = Category.objects.all().order_by('-id')
     categoryDic = []
+    categoryList = ''
     for i in categories:
         temp = []
         temp.append(i.name)
+        categoryList = i.name+' '+categoryList
         for j in photos:
             if i == j.category:
                 temp.append(j)
         categoryDic.append(temp)
+        print(categoryList)
     if request.method == 'GET':
-        return render(request, 'categories.html', {'lists': categoryDic})
+        return render(request, 'categories.html', {'lists': categoryDic, 'categories':categoryList})
     else:
-        categoryName = request.POST['newCategory']
-        isUnique = Category.objects.filter(name=categoryName)
-        if len(isUnique) >= 1:
-            return render(request, 'categories.html', {"resultMsg": "존재하는 카테고리 명입니다."})
         objCategory = Category()
-        objCategory.name = categoryName
+        objCategory.name = request.POST['newCategory']
         objCategory.save()
-        return render(request, 'categories.html', {"resultMsg": "성공"})
+        return redirect('/categories')
 
 
 def dbDetail(request, pk):
@@ -151,3 +159,34 @@ def flatting(request, pk):
     return render(request, 'flatting.html', {
         'img': photo
     })
+
+
+def categoryDetail(request, name):
+    try:
+        category = Category.objects.get(name = name)
+        photo = Photo.objects.filter(category = category).order_by('-id')
+    except:
+        raise Http404("해당 게시물을 찾을 수 없습니다.")
+    return render(request, 'categoryDetail.html', {
+        'img': photo,
+        'categoryName': category.name,
+    })
+
+
+def saveCanvas(request,pk):
+    if request.method == 'POST':
+        image = get_object_or_404(Photo, pk=pk)
+        crackLength = json.loads(request.body).get("crackLength")
+        print(crackLength)
+        dataURL = json.loads(request.body).get("dataURL")
+        dataURL = re.sub("^data:image/png;base64,", "", dataURL)
+        dataURL = base64.b64decode(dataURL)
+        dataURL = BytesIO(dataURL)
+        img = Image.open(dataURL)
+        img = np.array(img)
+        image.crackLength = crackLength
+        image.save()
+        cv2.imwrite(image.flatting_image.url[1:], img)
+        return redirect("/db")
+    else:
+        return redirect("/")
