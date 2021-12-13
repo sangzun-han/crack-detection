@@ -32,7 +32,7 @@ def infoUpload(request, pk):
     category = Category.objects.all()
     return render(request, 'infoUpload.html', {
         'img': photo,
-        'category' : category,
+        'category': category,
     })
 
 
@@ -45,7 +45,7 @@ def infoProcess(request, pk):
     photo.solution = request.POST['solution']
     if request.POST['category'] != 'noselect':
         category = Category.objects.get(name=request.POST['category'])
-        photo.category = category  
+        photo.category = category
     photo.save()
     return redirect('db')
 
@@ -122,7 +122,7 @@ def categories(request):
         categoryDic.append(temp)
         print(categoryList)
     if request.method == 'GET':
-        return render(request, 'categories.html', {'lists': categoryDic, 'categories':categoryList})
+        return render(request, 'categories.html', {'lists': categoryDic, 'categories': categoryList})
     else:
         objCategory = Category()
         objCategory.name = request.POST['newCategory']
@@ -163,8 +163,8 @@ def flatting(request, pk):
 
 def categoryDetail(request, name):
     try:
-        category = Category.objects.get(name = name)
-        photo = Photo.objects.filter(category = category).order_by('-id')
+        category = Category.objects.get(name=name)
+        photo = Photo.objects.filter(category=category).order_by('-id')
     except:
         raise Http404("해당 게시물을 찾을 수 없습니다.")
     return render(request, 'categoryDetail.html', {
@@ -173,11 +173,10 @@ def categoryDetail(request, name):
     })
 
 
-def saveCanvas(request,pk):
+def saveCanvas(request, pk):
     if request.method == 'POST':
         image = get_object_or_404(Photo, pk=pk)
         crackLength = json.loads(request.body).get("crackLength")
-        print(crackLength)
         dataURL = json.loads(request.body).get("dataURL")
         dataURL = re.sub("^data:image/png;base64,", "", dataURL)
         dataURL = base64.b64decode(dataURL)
@@ -190,3 +189,41 @@ def saveCanvas(request,pk):
         return redirect("/db")
     else:
         return redirect("/")
+
+
+def update(request, pk):
+    if request.method == 'POST':
+        photo = get_object_or_404(Photo, pk=pk)
+        category = Category.objects.all()
+        return render(request, 'infoUpdate.html', {
+            'img': photo,
+            'category': category,
+        })
+    else:
+        return render(request, 'get.html')
+
+
+def updatePost(request, pk):
+    if request.method == 'POST':
+        photo = Photo.objects.get(pk=pk)
+        photo.originWidth = request.POST['width']
+        photo.originHeight = request.POST['height']
+        photo.state = request.POST['state']
+        photo.cause = request.POST['cause']
+        photo.solution = request.POST['solution']
+        if request.POST['category'] != 'noselect':
+            category = Category.objects.get(name=request.POST['category'])
+            photo.category = category
+        photo.save()
+    else:
+        return render(request, 'get.html')
+    return redirect('db')
+
+
+def deletePost(request, pk):
+    if request.method == "POST":
+        photo = Photo.objects.get(pk=pk)
+        photo.delete()
+        return redirect('db')
+    else:
+        return render(request, 'get.html')

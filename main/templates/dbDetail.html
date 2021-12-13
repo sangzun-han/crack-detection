@@ -27,8 +27,17 @@
           <a href="{% url 'flatting' pk=img.pk %}"><button class="btn btn-outline-dark flex-shrink-0" type="button">
               <i class="fa fa-calculator"></i>
               flatting
-            </button></a>
+            </button>
+          </a>
         </div>
+          <div class="py-3 d-flex align-items-center">
+            <form action="" method="POST" name="formSubmit">
+              {% csrf_token %}
+              <input type="button" value="수정" class="me-3 btn btn-primary" onclick="getForm('update')" />
+              <input type="button" value="삭제" class="btn btn-primary" onclick="getForm('delete')" />
+            </form>
+          </div>
+      
       </div>
     </div>
   </div>
@@ -106,4 +115,31 @@
       </div>
     </div>
   </div>
+{% endblock %}
+
+{% block script %}
+<script>
+  function getForm(mode) {
+    const form = document.formSubmit;
+    if(mode == 'update') {
+      form.target = "_self";
+      form.action = "{% url 'update' pk=img.pk %}"
+      form.submit()
+    } 
+    else if (mode == 'delete') {
+      const res = confirm("정말로 삭제하시겠습니까?");
+      if(res) {
+        form.target = "_self";
+        form.action = "{% url 'deletePost' pk=img.pk %}"
+        form.submit()
+      }
+      else {
+        alert("삭제를 취소했습니다.");
+      }
+    } 
+    else {
+      window.location.href= "/"
+    }
+  }
+</script>
 {% endblock %}
