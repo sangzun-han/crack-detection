@@ -26,11 +26,12 @@ searchField.addEventListener("keyup", (event) => {
         } else {
           result.style.display = "none";
           data.map((item) => {
-            if (item.isFlattened == "True") {
+            if (item.isFlattened == true) {
               item.isFlattened = "O";
             } else {
               item.isFlattened = "X";
             }
+
             tbody.innerHTML += `
               <tr>
               <td scope="row">${item.id}</td>

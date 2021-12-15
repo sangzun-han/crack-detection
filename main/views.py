@@ -164,7 +164,7 @@ def flatting(request, pk):
 def categoryDetail(request, name):
     try:
         category = Category.objects.get(name=name)
-        photo = Photo.objects.filter(category=category).order_by('-id')
+        photo = Photo.objects.filter(category=category)
     except:
         raise Http404("해당 게시물을 찾을 수 없습니다.")
     return render(request, 'categoryDetail.html', {

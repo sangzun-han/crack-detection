@@ -18,5 +18,4 @@ urlpatterns = [
     path('update/<pk>', views.update, name="update"),
     path('updatePost/<pk>', views.updatePost, name="updatePost"),
     path('deletePost/<pk>', views.deletePost, name="deletePost"),
-
 ]
