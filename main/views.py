@@ -11,7 +11,7 @@ from io import BytesIO
 from PIL import Image
 import re
 import base64
-
+from django.db.models import Q
 
 # Create your views here.
 
@@ -142,8 +142,19 @@ def dbDetail(request, pk):
 
 def search(request):
     if request.method == 'POST':
-        search_str = json.loads(request.body).get('searchText')
-        expenses = Photo.objects.filter(category__name__icontains=search_str)
+        searchStr = json.loads(request.body).get('searchText')
+        expenses = Photo.objects.filter(category__name__icontains=searchStr)
+        data = expenses.values()
+        list_data = list(data)
+        for i in range(len(expenses)):
+            list_data[i]['category_name'] = expenses[i].category.name
+        return JsonResponse(list_data, safe=False)
+
+
+def mobileSearch(request):
+    if request.method == 'POST':
+        searchStr = json.loads(request.body).get("searchText")
+        expenses = Photo.objects.filter(category__name__icontains=searchStr)
         data = expenses.values()
         list_data = list(data)
         for i in range(len(expenses)):
