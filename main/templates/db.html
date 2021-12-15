@@ -30,6 +30,10 @@
     display: none;
   }
   
+  .card-output {
+    display: none;
+  }
+
   #mobileInput {
     display: none;
   }
@@ -54,6 +58,7 @@
       display: flex;
       flex-wrap: nowrap;
     }
+
   }
 </style>
 <table class="table origin-table" id="table" style="vertical-align: middle; text-align: center">
@@ -138,7 +143,7 @@
   <div class="card mb-3" style="max-width: 80%;">
     <div class="row g-0">
       <div class="col-md-4">
-        <img src="{{page_obj.image.url}}" class="img-fluid rounded-start" alt="image" />
+        <a href="{% url 'dbDetail' pk=page_obj.pk %}"><img src="{{page_obj.image.url}}" class="img-fluid rounded-start" alt="image" /></a>
       </div>
       <div class="col-md-8">
         <div class="card-body">

@@ -36,7 +36,7 @@ searchField.addEventListener("keyup", (event) => {
               <tr>
               <td scope="row">${item.id}</td>
               <td>
-               <a href=""><img src="/media/${item.image}" alt="image" style="width: 200px" /></a>
+              <a href="/db/${item.id}"><img src="/media/${item.image}" alt="image" style="width: 200px" /></a>
               </td>
               <td>${item.category_name}</td>
               <td>${item.state}</td>

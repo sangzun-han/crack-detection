@@ -6,7 +6,6 @@ cardOutput.style.display = "none";
 
 mobileSearchField.addEventListener("keyup", (event) => {
   const searchValue = event.target.value;
-  console.log(searchValue, searchValue.length);
 
   if (searchValue.trim().length > 0) {
     cardOutput.innerHTML = "";
@@ -36,7 +35,7 @@ mobileSearchField.addEventListener("keyup", (event) => {
             <div class="card mb-3" style="max-width: 80%;">
               <div class="row g-0">
                 <div class="col-md-4">
-                  <img src="/media/${item.image}" class="img-fluid rounded-start" alt="image" />
+                <a href="/db/${item.id}"><img src="/media/${item.image}" class="img-fluid rounded-start" alt="image" /></a>
                 </div>
                 <div class="col-md-8">
                   <div class="card-body">
