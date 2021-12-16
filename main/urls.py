@@ -11,7 +11,6 @@ urlpatterns = [
     path('info-process/<pk>', views.infoProcess, name="infoProcess"),
     path('db/<pk>', views.dbDetail, name="dbDetail"),
     path('search', csrf_exempt(views.search), name="search"),
-    path('mobileSearch', csrf_exempt(views.mobileSearch), name="mobileSearch"),
     path('flatting/<pk>', views.flatting, name="flatting"),
     path('lengthCalc/', views.lengthCalc, name="lengthCalc"),
     path('category-detail/<name>', views.categoryDetail, name="categoryDetail"),

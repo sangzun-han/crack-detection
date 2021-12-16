@@ -1,28 +1,27 @@
 const searchField = document.querySelector("#searchField");
-const tableOutput = document.querySelector(".table-output");
-const table = document.querySelector(".origin-table");
+const cardOutput = document.querySelector(".card-output");
+const card = document.querySelector(".card-deck");
 const page = document.querySelector(".page");
-const tbody = document.querySelector(".table-body");
 const result = document.querySelector(".result");
-tableOutput.style.display = "none";
+cardOutput.style.display = "none";
 
 searchField.addEventListener("keyup", (event) => {
   const searchValue = event.target.value;
   if (searchValue.trim().length > 0) {
     page.style.disply = "none";
-    tbody.innerHTML = "";
+    cardOutput.innerHTML = "";
     fetch("/search", {
       body: JSON.stringify({ searchText: searchValue }),
       method: "POST",
     })
       .then((res) => res.json())
       .then((data) => {
-        table.style.display = "none";
-        tableOutput.style.display = "block";
+        card.style.display = "none";
+        cardOutput.style.display = "flex";
 
         if (data.length === 0) {
           result.style.display = "block";
-          tableOutput.style.display = "none";
+          cardOutput.style.display = "none";
         } else {
           result.style.display = "none";
           data.map((item) => {
@@ -32,25 +31,29 @@ searchField.addEventListener("keyup", (event) => {
               item.isFlattened = "X";
             }
 
-            tbody.innerHTML += `
-              <tr>
-              <td scope="row">${item.id}</td>
-              <td>
-              <a href="/db/${item.id}"><img src="/media/${item.image}" alt="image" style="width: 200px" /></a>
-              </td>
-              <td>${item.category_name}</td>
-              <td>${item.state}</td>
-              <td>${item.cause}</td>
-              <td>${item.solution}</td>
-              <td>${item.isFlattened}</td>
-              </tr>
+            cardOutput.innerHTML += `
+              <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="card">    
+                  <div class="view overlay">
+                    <img class="card-img-top" src="/media/${item.image}" alt="Card image cap">
+                  </div>
+                  <div class="card-body">
+                    <h4 class="card-title">카테고리 : ${item.category_name}</h4>
+                    <p class="card-text"><p>현황 : ${item.state}</p>
+                    <p class="card-text"><p>원인 : ${item.cause}</p>
+                    <p class="card-text"><p>해결방안 : ${item.solution}</p>
+                    <p class="card-text"><p>평탄화 : ${item.isFlattened}</p>
+                    <a href="/db/${item.id}" class="btn btn-primary">더보기</a>
+                  </div>
+                </div>
+              </div>
             `;
           });
         }
       });
   } else {
-    tableOutput.style.display = "none";
-    table.style.display = "table";
+    cardOutput.style.display = "none";
+    card.style.display = "flex";
     page.style.disply = "block";
     result.style.display = "none";
   }

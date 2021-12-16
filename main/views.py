@@ -151,17 +151,6 @@ def search(request):
         return JsonResponse(list_data, safe=False)
 
 
-def mobileSearch(request):
-    if request.method == 'POST':
-        searchStr = json.loads(request.body).get("searchText")
-        expenses = Photo.objects.filter(category__name__icontains=searchStr)
-        data = expenses.values()
-        list_data = list(data)
-        for i in range(len(expenses)):
-            list_data[i]['category_name'] = expenses[i].category.name
-        return JsonResponse(list_data, safe=False)
-
-
 def flatting(request, pk):
     try:
         photo = Photo.objects.get(pk=pk)
